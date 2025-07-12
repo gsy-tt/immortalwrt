@@ -52,14 +52,14 @@ jobs:
 
       - name: Compile firmware
         run: |
-          cd immortalwrt
+       
           # 使用 -j$(nproc) 并行编译，V=s 输出详细日志
           make -j$(nproc) V=s || make -j1 V=s  # 如果并行编译失败，尝试单线程编译
 
       - name: Collect artifacts
         id: collect
         run: |
-          cd immortalwrt/bin/targets/*/*
+          cd bin/targets/*/*
           FILES=$(ls *.bin *.img.gz 2>/dev/null || true)
           echo "artifact_files=$(echo $FILES | tr ' ' ',')" >> $GITHUB_ENV
           echo "artifact_count=$(echo $FILES | wc -w)" >> $GITHUB_ENV
@@ -70,9 +70,9 @@ jobs:
         with:
           name: be6500-firmware
           path: |
-            immortalwrt/bin/targets/*/*/*.bin
-            immortalwrt/bin/targets/*/*/*.img.gz
-            immortalwrt/bin/targets/*/*/packages
+            bin/targets/*/*/*.bin
+            bin/targets/*/*/*.img.gz
+            bin/targets/*/*/packages
           retention-days: 7
 
       - name: Display firmware information
