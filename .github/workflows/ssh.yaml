@@ -1,0 +1,31 @@
+name: SSH into GitHub Actions runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      timeout:
+        description: 'tmate session timeout in minutes'
+        default: '60'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          timeout-minutes: ${{ github.event.inputs.timeout }}
+          limit-access-to-actor: true
+          # 可选：启用 IPv6 支持以绕过某些网络限制
+          # enable-ipv6: true
+          
+      - name: Display connection instructions
+        run: |
+          echo "======================================"
+          echo "请使用以下命令连接到 tmate 会话："
+          echo "ssh $TMATE_SSH_HOST"
+          echo "======================================"
