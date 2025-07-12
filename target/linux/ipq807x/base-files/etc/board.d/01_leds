@@ -28,6 +28,10 @@ qnap,301w)
 	ucidef_set_led_netdev "10G_1" "10G_1" "green:10g_1" "10g-1"
 	ucidef_set_led_netdev "10G_2" "10G_2" "green:10g_2" "10g-2"
 	;;
+jdcloud-BE6500)
+    label="jdcloud-BE6500"
+    description="京东云 BE6500 (IPQ5332)"
+    ;;
 esac
 
 board_config_flush
