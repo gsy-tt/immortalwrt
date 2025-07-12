@@ -1,0 +1,93 @@
+/dts-v1/;
+#include "ipq5332.dtsi"
+#include "qcom-ipq5332-pci.dtsi"
+
+/ {
+    model = "JD Cloud BE6500 (RE-CS-06)";
+    compatible = "qcom,ipq5332-be6500", "qcom,ipq5332";
+
+    memory@0 {
+        device_type = "memory";
+        reg = <0x0 0x40000000>; // 1GB DDR4
+    };
+
+    chosen {
+        bootargs = "console=ttyMSM0,115200n8 root=PARTUUID=0000 rootfstype=squashfs noinitrd";
+    };
+
+    /* 网络交换芯片 QCA8386 */
+    pcie@1e {
+        compatible = "qcom,ipq5332-pcie";
+        reg = <0x1e 0x4>;
+        status = "okay";
+        #address-cells = <3>;
+        #size-cells = <2>;
+
+        switch@0 {
+            compatible = "qca,qca8386";
+            reg = <0x0 0x0 0x0>;
+            port@0 {
+                label = "lan0";
+                phy-handle = <&phy0>;
+                phy-mode = "sgmii";
+            };
+            // 其他端口定义（需根据硬件连接补充）
+        };
+    };
+
+    /* USB3.0控制器 */
+    usb@80 {
+        compatible = "qcom,ipq5332-usb3";
+        reg = <0x80 0x100>;
+        status = "okay";
+    };
+
+    /* 2.4G Wi-Fi 7（集成于CPU） */
+    wifi@0 {
+        compatible = "qcom,wmac";
+        reg = <0x0 0x1000>;
+        interrupts = <0x8 0x4>;
+        qcom,wifi-mac-addr = [00 11 22 33 44 55];
+    };
+
+    /* 5G Wi-Fi（QCN6224） */
+    pcie@1f {
+        compatible = "qcom,ipq5332-pcie";
+        reg = <0x1f 0x4>;
+        status = "okay";
+
+        wifi@0 {
+            compatible = "qcom,ath11k-pci";
+            reg = <0x0 0x0 0x0>;
+            qcom,ath11k-fem = "qpf4559";
+        };
+    };
+
+    /* LED & GPIO */
+    gpio-leds {
+        compatible = "gpio-leds";
+        joy_led: led@0 {
+            label = "be6500:blue:joy";
+            gpios = <0x3 0x1>;
+        };
+        power {
+            label = "be6500:blue:power";
+            gpios = <0x5 0x0>;
+        };
+    };
+
+    /* 按键 */
+    gpio-keys {
+        compatible = "gpio-keys";
+        reset {
+            label = "reset";
+            gpios = <0x7 0x0>;
+            linux,code = <0x198>;
+        };
+        joy_button {
+            label = "joy";
+            gpios = <0x9 0x0>;
+            linux,code = <0x211>;
+        };
+    };
+};
