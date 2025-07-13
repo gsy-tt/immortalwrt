@@ -105,5 +105,16 @@
         clocks = <&clock 24>;
         clock-names = "pcie";
         status = "okay";
+        qcn6224: wifi@0,0 {
+            compatible = "qcom,ath11k";
+            reg = <0 0 0 0 0>;
+            status = "okay";
+            
+            // 添加PCIe特定配置
+            device_type = "wifi";
+            interrupt-parent = <&pcie@10000000>;
+            interrupts = <0 0 0;  
+            qcom,chip-id = <0x6224>;
+        };
     };
 };
