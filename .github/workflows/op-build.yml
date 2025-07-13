@@ -20,10 +20,14 @@ jobs:
         run: |
           # 安装必要的依赖（根据 OpenWrt 官方文档）
           sudo apt-get update -y
-          sudo apt-get install -y build-essential ccache ecj fastjar file g++ gawk \
-            gettext git java-propose-classpath libelf-dev libncurses5-dev \
-            libncursesw5-dev libssl-dev python3 python3-distutils python3-setuptools \
-            python3-dev rsync subversion swig time unzip wget xmlto flex、bison、lib32z1
+          sudo apt-get install -y \
+            build-essential ccache ecj fastjar file g++ gawk gettext git \
+            java-propose-classpath libelf-dev libncurses5-dev libncursesw5-dev \
+            libssl-dev lib32z1 lib32stdc++6 \
+            python3 python3-distutils python3-setuptools python3-dev \
+            rsync subversion swig time unzip wget xmlto zlib1g-dev \
+            flex bison quilt libtool automake autoconf texinfo \
+            libglib2.0-dev libarchive-dev pkg-config
             
       - name: copy .config
         run: |
