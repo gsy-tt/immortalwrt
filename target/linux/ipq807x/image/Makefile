@@ -18,6 +18,7 @@ define Device/jdcloud-be6500
   $(Device/qcom-ipq53xx)
   DEVICE_VENDOR := jdcloud
   DEVICE_MODEL := be6500
+  DEVICE_DTS := ipq5322-jdcloud-be6500
   DEVICE_PACKAGES := kmod-usb3 kmod-usb-ledtrig-usbport \
                      kmod-mmc kmod-sdhci kmod-sdhci-pci \
                      kmod-qca-nss-drv-ipq53xx kmod-qca-nss-drv-eth \
