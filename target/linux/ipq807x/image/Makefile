@@ -1,31 +1,28 @@
 include $(TOPDIR)/rules.mk
-include $(INCLUDE_DIR)/image.mk
 
-define Device/Default
-	PROFILES := Default
-	KERNEL_LOADADDR := 0x41000000
-	DEVICE_DTS = $$(SOC)-$(lastword $(subst _, ,$(1)))
-	DEVICE_DTS_CONFIG := config@1
-	DEVICE_DTS_DIR := $(DTS_DIR)/qcom
-	IMAGES := sysupgrade.bin
-	IMAGE/sysupgrade.bin = sysupgrade-tar | append-metadata
-	IMAGE/sysupgrade.bin/squashfs :=
+# 定义设备
+define Device/jdcloud-be6500
+  DEVICE_VENDOR := JDCloud
+  DEVICE_MODEL := BE6500
+  # 明确DTS路径（与dts/Makefile中的目标路径一致）
+  DEVICE_DTS := qcom/ipq5332-jdcloud-be6500
+  # 生成sysupgrade镜像的规则
+  IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | sysupgrade-tar
 endef
-BE6500_DEVICE_NAME := ipq5332-jdcloud-be6500
-BE6500_DEVICES := ipq5332-jdcloud-be6500
+TARGET_DEVICES += jdcloud-be6500
 
-define Device/ipq5332-jdcloud-be6500
-  $(Device/Default)
-  DEVICE_VENDOR := jdcloud
-  DEVICE_MODEL := be6500
-  DEVICE_DTS := ipq5332-jdcloud-be6500
-  DEVICE_PACKAGES := kmod-usb3 kmod-usb-ledtrig-usbport \
-                     kmod-mmc kmod-sdhci kmod-sdhci-pci \
-                     kmod-qca-nss-drv-ipq53xx kmod-qca-nss-drv-eth \
-                     kmod-qca-nss-drv-pcie kmod-qca-nss-gmac \
-                     kmod-ath11k-ahb kmod-ath11k-pci
-endef
-TARGET_DEVICES += ipq5332-jdcloud-be6500
-include $(SUBTARGET).mk
+# 编译DTB的规则（依赖dts/Makefile中的复制规则）
+$(BUILD_DIR)/image-$(DEVICE_DTS).dtb: $(DTS_DIR)/$(DEVICE_DTS).dts
+    aarch64-openwrt-linux-musl-cpp -nostdinc -x assembler-with-cpp \
+        -I$(LINUX_DIR)/arch/arm64/boot/dts \
+        -I$(LINUX_DIR)/arch/arm64/boot/dts/include \
+        -I$(LINUX_DIR)/include \
+        -undef -D__DTS__ \
+        -o $@.tmp $<
+    dtc -O dtb -o $@ $@.tmp
+
+# 保留image/Makefile的clean规则（删除冲突的旧规则后，此规则生效）
+clean:
+    rm -f $(BUILD_DIR)/image-*.dtb
 
 $(eval $(call BuildImage))
