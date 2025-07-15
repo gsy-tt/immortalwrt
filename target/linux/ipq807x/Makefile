@@ -18,5 +18,5 @@ DEFAULT_PACKAGES += \
 	ath11k-firmware-ipq8074 kmod-ath11k-ahb wpad-openssl \
 	uboot-envtools automount losetup \
 	autocore luci-app-cpufreq
-
+include $(CURDIR)/dts/Makefile  # 显式包含dts的Makefile
 $(eval $(call BuildTarget))
