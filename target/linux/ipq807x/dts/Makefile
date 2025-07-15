@@ -7,7 +7,7 @@
 
 include $(TOPDIR)/rules.mk
 
-DTS_DIR := $(LINUX_DIR)/arch/arm64/boot/dts/qcom
+DTS_DIR := $(LINUX_DIR)/arch/arm64/boot/dts
 
 # 设备树文件列表（不含 .dts 后缀）
 DTS_FILES := \
