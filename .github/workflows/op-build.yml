@@ -51,6 +51,8 @@ jobs:
           # make menuconfig -d config.seed  # 使用配置种子文件
           # make kernel_menuconfig  # 配置内核选项
           cp .config-bak .config
+          mkdir -p build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/
+          cp target/linux/ipq807x/dts/qcom/ipq5332-jdcloud-be6500.dts build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/
 
       - name: Download dependencies
         run: |
