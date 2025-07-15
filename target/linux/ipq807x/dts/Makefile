@@ -11,7 +11,7 @@ DTS_DIR := $(LINUX_DIR)/arch/arm64/boot/dts
 
 # 设备树文件列表（不含 .dts 后缀）
 DTS_FILES := \
-    ipq5332-jdcloud-be6500  
+    qcom/ipq5332-jdcloud-be6500  
 
 # 默认编译所有设备树
 DTS_TARGETS := $(DTS_FILES)
