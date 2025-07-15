@@ -15,7 +15,7 @@ BE6500_DEVICE_NAME := ipq5332-jdcloud-be6500
 BE6500_DEVICES := ipq5332-jdcloud-be6500
 
 define Device/ipq5332-jdcloud-be6500
-  $(Device/qcom-ipq53xx)
+  $(Device/Default)
   DEVICE_VENDOR := jdcloud
   DEVICE_MODEL := be6500
   DEVICE_DTS := ipq5332-jdcloud-be6500
