@@ -1,22 +1,27 @@
-# 添加必要的包含文件，引入DTS_template宏
 include $(TOPDIR)/rules.mk
-include $(INCLUDE_DIR)/kernel.mk  # 关键：引入DTS编译规则
+include $(INCLUDE_DIR)/kernel.mk
 
+# 设备树源文件所在目录（你的源码路径）
+SRC_DTS_DIR := $(CURDIR)/qcom
+# 内核编译目录（目标路径）
 DTS_DIR := $(LINUX_DIR)/arch/arm64/boot/dts
 
-# 设备树文件列表（含路径）
-DTS_FILES := \
-    qcom/ipq5332-jdcloud-be6500  
+# 设备树列表（仅文件名，不含路径）
+DTS_FILES := ipq5332-jdcloud-be6500
 
-# 定义DTS_template宏（如果引入kernel.mk后仍无效，手动添加）
+# 生成.dtb的规则：从源码目录复制到内核目录并编译
 define DTS_template
-$(1).dtb: $(DTS_DIR)/$(1).dts
+$(DTS_DIR)/qcom/$(1).dtb: $(SRC_DTS_DIR)/$(1).dts
+	# 确保内核目录存在
+	mkdir -p $(DTS_DIR)/qcom
+	# 复制源文件到内核目录（关键：预处理工具只能识别内核目录的文件）
+	cp $(SRC_DTS_DIR)/$(1).dts $(DTS_DIR)/qcom/
+	# 预处理并编译设备树
 	$(call cmd,dtc)
 endef
 
-# 生成.dtb文件
+# 遍历所有设备树生成规则
 $(foreach dts,$(DTS_FILES),$(eval $(call DTS_template,$(dts))))
 
-# 清理规则
 clean:
-	rm -f $(addprefix $(DTS_DIR)/,$(addsuffix .dtb,$(DTS_FILES)))
+	rm -f $(addprefix $(DTS_DIR)/qcom/,$(addsuffix .dtb,$(DTS_FILES)))
