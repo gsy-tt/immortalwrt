@@ -1,22 +1,26 @@
 include $(TOPDIR)/rules.mk
 
+# 平台基本信息（固定配置）
 ARCH:=aarch64
 BOARD:=ipq807x
 BOARDNAME:=Qualcomm Atheros IPQ807x
 FEATURES:=squashfs ramdisk fpu nand rtc emmc
-KERNELNAME:=Image dtbs
+KERNELNAME:=Image dtbs  # 声明需要编译内核镜像和设备树
 CPU_TYPE:=cortex-a53
-SUBTARGETS:=generic
+SUBTARGETS:=generic  # 子目标（可理解为平台细分型号）
 
-KERNEL_PATCHVER:=5.15
+KERNEL_PATCHVER:=5.15  # 内核版本
 
-include $(INCLUDE_DIR)/target.mk
+include $(INCLUDE_DIR)/target.mk  # 引入通用目标配置
+
+# 默认预装的包（按需添加）
 DEFAULT_PACKAGES += \
-	kmod-usb3 kmod-usb-dwc3 kmod-usb-dwc3-qcom \
-	kmod-leds-gpio kmod-gpio-button-hotplug \
-	kmod-qca-nss-dp qca-ssdk-shell kmod-phy-aquantia \
-	ath11k-firmware-ipq8074 kmod-ath11k-ahb wpad-openssl \
-	uboot-envtools automount losetup \
-	autocore luci-app-cpufreq
-include $(CURDIR)/ipq807x/dts/Makefile  # 显式包含dts的Makefile
+    kmod-usb3 kmod-leds-gpio kmod-ath11k-ahb \
+    wpad-openssl uboot-envtools
+
+# 关键：引用当前目录下的dts/Makefile（管理DTS文件）
+# $(CURDIR) 表示当前目录：target/linux/ipq807x/
+include $(CURDIR)/dts/Makefile
+
+# 构建目标（固定格式）
 $(eval $(call BuildTarget))
