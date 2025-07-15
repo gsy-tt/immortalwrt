@@ -113,7 +113,7 @@
             // 添加PCIe特定配置
             device_type = "wifi";
             interrupt-parent = <&pcie@10000000>;
-            interrupts = <0 0 0;  
+            interrupts = <0 0 0>;  
             qcom,chip-id = <0x6224>;
         };
     };
