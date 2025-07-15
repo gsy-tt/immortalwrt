@@ -4,7 +4,7 @@
 
 / {
     model = "jdcloud-be6500";
-    compatible = "qcom,ipq5332-be6500", "qcom,ipq5332";
+    compatible = "qcom,ipq5332-jdcloud-be6500", "qcom,ipq5332";
 
     memory {
         reg = <0x0 0x40000000>; /* 1GB DDR4 */
