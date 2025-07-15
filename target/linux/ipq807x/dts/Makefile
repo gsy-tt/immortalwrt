@@ -1,24 +1,22 @@
-#
-# Copyright (C) 2018 OpenWrt.org
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
-
+# 添加必要的包含文件，引入DTS_template宏
 include $(TOPDIR)/rules.mk
+include $(INCLUDE_DIR)/kernel.mk  # 关键：引入DTS编译规则
 
 DTS_DIR := $(LINUX_DIR)/arch/arm64/boot/dts
 
-# 设备树文件列表（不含 .dts 后缀）
+# 设备树文件列表（含路径）
 DTS_FILES := \
     qcom/ipq5332-jdcloud-be6500  
 
-# 默认编译所有设备树
-DTS_TARGETS := $(DTS_FILES)
+# 定义DTS_template宏（如果引入kernel.mk后仍无效，手动添加）
+define DTS_template
+$(1).dtb: $(DTS_DIR)/$(1).dts
+	$(call cmd,dtc)
+endef
 
-# 生成 .dtb 文件的规则
-$(foreach dts,$(DTS_TARGETS),$(eval $(call DTS_template,$(dts))))
+# 生成.dtb文件
+$(foreach dts,$(DTS_FILES),$(eval $(call DTS_template,$(dts))))
 
 # 清理规则
 clean:
-    rm -f $(addprefix $(DTS_DIR)/,$(addsuffix .dtb,$(DTS_FILES)))
+	rm -f $(addprefix $(DTS_DIR)/,$(addsuffix .dtb,$(DTS_FILES)))
