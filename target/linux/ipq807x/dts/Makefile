@@ -1,17 +1,19 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
-# 源DTS路径（你的DTS存放位置）
-SRC_DTS := $(CURDIR)/qcom/ipq5332-jdcloud-be6500.dts
-# 目标路径（内核编译目录）
-DST_DTS := $(LINUX_DIR)/arch/arm64/boot/dts/qcom/ipq5332-jdcloud-be6500.dts
+# 定义要编译的DTS文件名（不含路径和后缀）
+DTS_FILES := ipq5332-jdcloud-be6500
+# DTS文件存放路径（相对于当前目录）
+DTS_DIR := $(CURDIR)/qcom
 
-# 定义复制规则：确保DTS被复制到内核目录
-$(DST_DTS): $(SRC_DTS)
-	@mkdir -p $(dir $@)
-	@cp -f $< $@
-	@echo "Copied DTS to kernel directory: $@"
+# 自动复制DTS到内核目录并编译的规则（OpenWRT标准写法）
+define Build/Compile
+	$(foreach dts,$(DTS_FILES), \
+		$(KERNEL_MAKE_FLAGS) \
+		DTBO=$(dts).dtbo \
+		$(MAKE) -C $(LINUX_DIR) M=$(LINUX_DIR)/arch/arm64/boot/dts/qcom \
+		$(dts).dtb; \
+	)
+endef
 
-# 将复制规则添加到内核构建依赖
-$(eval $(call AddDependencyFiles,$(DST_DTS),$(SRC_DTS)))
 $(eval $(call BuildKernel))
