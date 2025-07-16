@@ -17,6 +17,6 @@ DEFAULT_PACKAGES += \
     wpad-openssl uboot-envtools
 
 # 恢复对 DTS 规则的引用
-include $(CURDIR)/dts/Makefile
+include $(CURDIR)/ipq807x/dts/Makefile
 
 $(eval $(call BuildTarget))
