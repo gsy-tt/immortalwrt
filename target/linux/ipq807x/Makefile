@@ -18,6 +18,6 @@ DEFAULT_PACKAGES += \
 
 # 关键修正：用 $(TOPDIR) 拼接绝对路径
 # $(TOPDIR) 是源码根目录，直接指向 ipq807x/dts/Makefile
-# include $(TOPDIR)/target/linux/ipq807x/dts/Makefile
+include $(TOPDIR)/target/linux/ipq807x/dts/Makefile
 
 $(eval $(call BuildTarget))
