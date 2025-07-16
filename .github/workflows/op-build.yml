@@ -62,10 +62,13 @@ jobs:
 
       - name: Compile firmware
         run: |
-         mkdir -p build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/
-         cp target/linux/ipq807x/dts/qcom/ipq5332-jdcloud-be6500.dts build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/
-          # 使用 -j$(nproc) 并行编译，V=s 输出详细日志
-          make -j$(nproc) V=s || make -j1 V=s  # 如果并行编译失败，尝试单线程编译
+          # 先执行 make，让内核目录结构生成
+          make -j$(nproc) V=s || {
+          # 若失败，在单线程编译前手动复制 DTS
+          mkdir -p build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/
+          cp target/linux/ipq807x/dts/qcom/ipq5332-jdcloud-be6500.dts build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/
+          make -j1 V=s
+          }
 
       - name: Collect artifacts
         id: collect
