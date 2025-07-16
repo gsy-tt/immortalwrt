@@ -16,8 +16,7 @@ DEFAULT_PACKAGES += \
     kmod-usb3 kmod-leds-gpio kmod-ath11k-ahb \
     wpad-openssl uboot-envtools
 
-# 关键修正：用 $(TOPDIR) 拼接绝对路径
-# $(TOPDIR) 是源码根目录，直接指向 ipq807x/dts/Makefile
-# include $(TOPDIR)/target/linux/ipq807x/dts/Makefile
+# 恢复对 DTS 规则的引用
+include $(CURDIR)/dts/Makefile
 
 $(eval $(call BuildTarget))
