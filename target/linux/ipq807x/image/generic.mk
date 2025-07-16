@@ -214,3 +214,11 @@ define Device/zyxel_nbg7815
 		kmod-bluetooth kmod-hwmon-tmp103
 endef
 TARGET_DEVICES += zyxel_nbg7815
+define Device/ipq5332-jdcloud-be6500
+  $(Device/ipq807x_generic)
+  DEVICE_VENDOR := JDCloud
+  DEVICE_MODEL := BE6500
+  DEVICE_DTS := qcom/ipq5332-jdcloud-be6500
+
+endef
+$(eval $(call Device,ipq5332-jdcloud-be6500))
