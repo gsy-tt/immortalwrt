@@ -59,24 +59,36 @@ jobs:
           make download -j$(nproc)
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
+
+      - name: Temporarily remove faulty patch
+        run: |
+          if [ -f "target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch" ]; then
+            mv target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch.bak
+          fi
       # 新增：提前解压内核源码（关键步骤）
       - name: Extract kernel source
         run: |
           # 触发内核源码解压（不实际编译）
           make target/linux/prepare V=s
 
+
       - name: Generate correct patch
         run: |
-          # 复制实际文件到临时目录
-          mkdir -p temp/orig temp/new
-          cp build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile temp/orig/
-          cp temp/orig/Makefile temp/new/
-          # 在new目录的文件中添加你的DTB（追加到列表最后）
-          sed -i '/dtb-$(CONFIG_ARCH_QCOM) +=/!b;n;n;n;a\    ipq5332-jdcloud-be6500.dtb' temp/new/Makefile
-          # 生成补丁
-          diff -u temp/orig/Makefile temp/new/Makefile > target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
-          # 显示生成的补丁供检查
-          cat target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
+          run: |
+            mkdir -p temp/orig temp/new
+            # 复制已应用所有官方补丁的正确Makefile
+            cp build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile temp/orig/
+            cp temp/orig/Makefile temp/new/
+    
+            # 按实际最后一个dtb文件名添加（替换为实际输出的最后一个dtb）
+            sed -i '/ipq8074-nbg6817.dtb/a\    ipq5332-jdcloud-be6500.dtb' temp/new/Makefile
+    
+            # 生成新补丁并覆盖旧的
+            diff -u temp/orig/Makefile temp/new/Makefile > target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
+            echo "=== 新生成的补丁 ==="
+            cat target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
+      - name: Re-apply all patches with correct 999 patch
+        run: make target/linux/prepare V=s
 
       - name: Compile firmware
         run: |
