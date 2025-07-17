@@ -55,7 +55,7 @@ jobs:
       - name: Temporarily remove faulty patch
         run: |
           if [ -f "target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch" ]; then
-            mv target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch.bak
+            mv target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch 999-add-custom-dts.patch
           fi
         
       - name: Download dependencies
@@ -74,13 +74,12 @@ jobs:
       - name: Generate correct patch
         run: |
           run: |
-            cp target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch.bak target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
+            cp 999-add-custom-dts.patch target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
             # 复制已应用所有官方补丁的正确Makefile
             cp build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile.orig
             # 按实际最后一个dtb文件名添加（替换为实际输出的最后一个dtb）
             echo 'dtb-$(CONFIG_ARCH_QCOM) += ipq5332-jdcloud-be6500.dtb' >> build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile
-            diff -u  -label a/arch/arm64/boot/dts/qcom/Makefile --label b/arch/arm64/boot/dts/qcom/Makefile > target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
-    
+            diff -u  -label a/arch/arm64/boot/dts/qcom/Makefile --label b/arch/arm64/boot/dts/qcom/Makefile  cp build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile.orig  cp build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile > target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch    
             echo "=== 新生成的补丁 ==="
             cat target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
       - name: Re-apply all patches with correct 999 patch
