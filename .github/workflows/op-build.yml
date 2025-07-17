@@ -51,8 +51,13 @@ jobs:
           # make menuconfig -d config.seed  # 使用配置种子文件
           # make kernel_menuconfig  # 配置内核选项
           cp .config-bak .config
-          
 
+      - name: Temporarily remove faulty patch
+        run: |
+          if [ -f "target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch" ]; then
+            mv target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch.bak
+          fi
+        
       - name: Download dependencies
         run: |
           make prereq V=s
@@ -60,31 +65,22 @@ jobs:
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
-      - name: Temporarily remove faulty patch
-        run: |
-          if [ -f "target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch" ]; then
-            mv target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch.bak
-          fi
+      
       # 新增：提前解压内核源码（关键步骤）
       - name: Extract kernel source
         run: |
           # 触发内核源码解压（不实际编译）
           make target/linux/prepare V=s
-
-
       - name: Generate correct patch
         run: |
           run: |
-            mkdir -p temp/orig temp/new
+            cp target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch.bak target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
             # 复制已应用所有官方补丁的正确Makefile
-            cp build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile temp/orig/
-            cp temp/orig/Makefile temp/new/
-    
+            cp build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile.orig
             # 按实际最后一个dtb文件名添加（替换为实际输出的最后一个dtb）
-            sed -i '/ipq8074-nbg6817.dtb/a\    ipq5332-jdcloud-be6500.dtb' temp/new/Makefile
+            echo 'dtb-$(CONFIG_ARCH_QCOM) += ipq5332-jdcloud-be6500.dtb' >> build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile
+            diff -u  -label a/arch/arm64/boot/dts/qcom/Makefile --label b/arch/arm64/boot/dts/qcom/Makefile > target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
     
-            # 生成新补丁并覆盖旧的
-            diff -u temp/orig/Makefile temp/new/Makefile > target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
             echo "=== 新生成的补丁 ==="
             cat target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
       - name: Re-apply all patches with correct 999 patch
