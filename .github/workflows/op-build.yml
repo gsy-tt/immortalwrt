@@ -55,7 +55,7 @@ jobs:
       - name: Temporarily remove faulty patch
         run: |
           if [ -f "target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch" ]; then
-            mv target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch 999-add-custom-dts.patch
+            mv target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch 999-add-custom-dts.patch .
           fi
         
       - name: Download dependencies
