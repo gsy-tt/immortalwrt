@@ -5,5 +5,6 @@ index 1234567..abcdefg 100644
 @@ -100,3 +100,4 @@ dtb-$(CONFIG_ARCH_QCOM) += \
      ipq8074-hk01.dtb \
      ipq8074-r7800.dtb \
-     ipq8074-nbg6817.dtb
-     ipq5332-jdcloud-be6500.dtb
+     ipq8074-nbg6817.dtb \
+     ipq5332-jdcloud-be6500.dtb \
++    ipq5332-jdcloud-be6500.dtb
