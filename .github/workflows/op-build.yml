@@ -59,6 +59,11 @@ jobs:
           make download -j$(nproc)
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
+      # 新增：提前解压内核源码（关键步骤）
+      - name: Extract kernel source
+        run: |
+          # 触发内核源码解压（不实际编译）
+          make target/linux/prepare V=s
 
       - name: Generate correct patch
         run: |
