@@ -74,12 +74,26 @@ jobs:
       - name: Generate correct patch
         run: |
           cp 999-add-custom-dts.patch target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
-          # 复制已应用所有官方补丁的正确Makefile
-          cp build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile.orig
-          # 按实际最后一个dtb文件名添加（替换为实际输出的最后一个dtb）
-          echo 'dtb-$(CONFIG_ARCH_QCOM) += ipq5332-jdcloud-be6500.dtb' >> build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile
-          diff -u  -label a/arch/arm64/boot/dts/qcom/Makefile --label b/arch/arm64/boot/dts/qcom/Makefile  build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile.orig  build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/Makefile > target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch    
-          echo "=== 新生成的补丁 ==="
+          # 定义内核源码目录路径
+          KERNEL_DIR="build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185"
+          DTS_DIR="$KERNEL_DIR/arch/arm64/boot/dts/qcom"
+    
+          # 复制原始Makefile作为基准
+          cp "$DTS_DIR/Makefile" "$DTS_DIR/Makefile.orig"
+    
+          # 添加你的设备到Makefile
+          echo 'dtb-$(CONFIG_ARCH_QCOM) += ipq5332-jdcloud-be6500.dtb' >> "$DTS_DIR/Makefile"
+    
+          # 生成正确格式的补丁（使用--from-file和--to-file选项）
+          diff --unified \
+           --from-file=a/arch/arm64/boot/dts/qcom/Makefile \
+           --to-file=b/arch/arm64/boot/dts/qcom/Makefile \
+           "$DTS_DIR/Makefile.orig" \
+           "$DTS_DIR/Makefile" \
+           > target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
+    
+          # 验证补丁内容
+          echo "=== 生成的补丁内容 ==="
           cat target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
       - name: Re-apply all patches with correct 999 patch
         run: make target/linux/prepare V=s
