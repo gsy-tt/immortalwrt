@@ -77,24 +77,33 @@ jobs:
           # 定义内核源码目录路径
           KERNEL_DIR="build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185"
           DTS_DIR="$KERNEL_DIR/arch/arm64/boot/dts/qcom"
-    
-          # 复制原始Makefile作为基准
-          cp "$DTS_DIR/Makefile" "$DTS_DIR/Makefile.orig"
-    
-          # 添加你的设备到Makefile
-          echo 'dtb-$(CONFIG_ARCH_QCOM) += ipq5332-jdcloud-be6500.dtb' >> "$DTS_DIR/Makefile"
-    
-          # 生成正确格式的补丁（使用--from-file和--to-file选项）
-          diff --unified \
-           --from-file=a/arch/arm64/boot/dts/qcom/Makefile \
-           --to-file=b/arch/arm64/boot/dts/qcom/Makefile \
-           "$DTS_DIR/Makefile.orig" \
-           "$DTS_DIR/Makefile" \
-           > target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
-    
+          
+          # 创建临时目录用于生成补丁
+          TEMP_DIR=$(mktemp -d)
+          cp "$DTS_DIR/Makefile" "$TEMP_DIR/Makefile.orig"
+          cp "$DTS_DIR/Makefile" "$TEMP_DIR/Makefile.modified"
+          
+          # 添加你的设备到修改后的Makefile
+          echo 'dtb-$(CONFIG_ARCH_QCOM) += ipq5332-jdcloud-be6500.dtb' >> "$TEMP_DIR/Makefile.modified"
+          
+          # 使用最简单的diff命令格式生成补丁
+          diff -u \
+            "$TEMP_DIR/Makefile.orig" \
+            "$TEMP_DIR/Makefile.modified" \
+            > target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
+          
+          # 手动添加正确的补丁头部（确保符合OpenWrt格式要求）
+          sed -i '1s/^/diff --git a\/arch\/arm64\/boot\/dts\/qcom\/Makefile b\/arch\/arm64\/boot\/dts\/qcom\/Makefile\n/' target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
+          sed -i "2s/^/index $(md5sum "$TEMP_DIR/Makefile.orig" | cut -d' ' -f1)..$(md5sum "$TEMP_DIR/Makefile.modified" | cut -d' ' -f1) 100644\n/" target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
+          sed -i '3s/^/--- a\/arch\/arm64\/boot\/dts\/qcom\/Makefile\n/' target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
+          sed -i '4s/^/+++ b\/arch\/arm64\/boot\/dts\/qcom\/Makefile\n/' target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
+          
           # 验证补丁内容
           echo "=== 生成的补丁内容 ==="
           cat target/linux/ipq807x/patches-5.15/999-add-custom-dts.patch
+          
+          # 清理临时目录
+          rm -rf "$TEMP_DIR"
       - name: Re-apply all patches with correct 999 patch
         run: make target/linux/prepare V=s
 
