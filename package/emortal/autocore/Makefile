@@ -4,6 +4,7 @@
 # Copyright (C) 2021-2023 ImmortalWrt.org
 
 include $(TOPDIR)/rules.mk
+$(eval $(call BuildPackage,autocore))
 
 PKG_NAME:=autocore
 PKG_FLAGS:=nonshared
@@ -48,4 +49,4 @@ endif
 	$(CP) ./files/luci-mod-status-autocore.json $(1)/usr/share/rpcd/acl.d/
 endef
 
-$(eval $(call BuildPackage,autocore))
+
