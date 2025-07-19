@@ -1,6 +1,7 @@
 /dts-v1/;
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
+#include "ipq5332-base.dtsi"
 
 / {
     model = "ipq5332-jdcloud-be6500";
@@ -26,25 +27,25 @@
 
         led_power: power {
             label = "be6500:green:power";
-            gpio = <&gpio 32 GPIO_ACTIVE_LOW>;
+            gpio = <&tlmm 32 GPIO_ACTIVE_LOW>;
             default-state = "on";
         };
 
         led_wifi_2g: wifi-2g {
             label = "be6500:blue:wifi-2g";
-            gpio = <&gpio 33 GPIO_ACTIVE_LOW>;
+            gpio = <&tlmm 33 GPIO_ACTIVE_LOW>;
             default-state = "off";
         };
 
         led_wifi_5g: wifi-5g {
             label = "be6500:blue:wifi-5g";
-            gpio = <&gpio 34 GPIO_ACTIVE_LOW>;
+            gpio = <&tlmm 34 GPIO_ACTIVE_LOW>;
             default-state = "off";
         };
 
         led_joy: joy {
             label = "be6500:rgb:joy";
-            gpio = <&gpio 35 GPIO_ACTIVE_LOW>;
+            gpio = <&tlmm 35 GPIO_ACTIVE_LOW>;
             default-state = "off";
         };
     };
@@ -56,14 +57,14 @@
 
         reset {
             label = "Reset";
-            gpios = <&gpio 26 GPIO_ACTIVE_LOW>;
+            gpios = <&tlmm 26 GPIO_ACTIVE_LOW>;
             linux,code = <KEY_RESTART>;
             debounce-interval = <200>;
         };
 
         joy {
             label = "Joy";
-            gpios = <&gpio 27 GPIO_ACTIVE_LOW>;
+            gpios = <&tlmm 27 GPIO_ACTIVE_LOW>;
             linux,code = <KEY_PROG1>;
             debounce-interval = <200>;
         };
@@ -98,7 +99,7 @@
         };
     };
 
-    pcie@10000000 {
+    pcie: pcie@10000000 {
         compatible = "qcom,ipq5332-pcie";
         reg = <0x10000000 0x1000000>;
         interrupts = <0 43 4>;
@@ -107,13 +108,11 @@
         status = "okay";
         qcn6224: wifi@0,0 {
             compatible = "qcom,ath11k";
-            reg = <0 0 0 0 0>;
+            reg = <0 0 0 0x1000>;
             status = "okay";
-            
-            // 添加PCIe特定配置
             device_type = "wifi";
-            interrupt-parent = <&pcie@10000000>;
-            interrupts = <0 0 0>;  
+            interrupt-parent = <&pcie>;
+            interrupts = <0 43 4>;
             qcom,chip-id = <0x6224>;
         };
     };
