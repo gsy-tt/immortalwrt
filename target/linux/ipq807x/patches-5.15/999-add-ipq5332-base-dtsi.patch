@@ -1,0 +1,33 @@
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/ipq5332-base.dtsi
+@@ -0,0 +1,30 @@
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++
++/ {
++    #address-cells = <2>;
++    #size-cells = <2>;
++
++    tlmm: gpio@1000000 {
++        compatible = "qcom,ipq5332-tlmm", "qcom,tlmm-v2";
++        reg = <0x0 0x01000000 0x0 0x100000>;
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++        gpio-controller;
++        #gpio-cells = <2>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++    };
++
++    clock: clock-controller@1800000 {
++        compatible = "qcom,ipq5332-clock";
++        reg = <0x0 0x01800000 0x0 0x100000>;
++        #clock-cells = <1>;
++    };
++
++    serial@78af000 {
++        compatible = "qcom,msm-uartdm-v1.4";
++        reg = <0x0 0x078af000 0x0 0x1000>;
++        interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&clock 24>;
++        status = "okay";
++    };
++};
