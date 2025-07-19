@@ -1,9 +1,9 @@
 diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 8a2b3c4..d5e6f7g 100644
+index 318fadc228729badc8d336386a40e85d..a449e899c54ca2c60ad68a90f6f22651 100644
 --- a/arch/arm64/boot/dts/qcom/Makefile
 +++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -3,6 +3,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
-     ipq8074-hk01.dtb \
-     ipq8074-r7800.dtb \
-     ipq8074-nbg6817.dtb \
-+    ipq5332-jdcloud-be6500.dtb
+@@ -95,3 +95,4 @@
+ dtb-$(CONFIG_ARCH_QCOM)	+= sm8250-sony-xperia-edo-pdx206.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= sm8350-hdk.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= sm8350-mtp.dtb
++dtb-$(CONFIG_ARCH_QCOM) += ipq5332-jdcloud-be6500.dtb
