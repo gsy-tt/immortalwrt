@@ -49,12 +49,13 @@ jobs:
 
       - name: Temporarily remove faulty patch
         run: |
-          make prereq V=s
+          make prereq V=sc
+          
           make download -j$(nproc)
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
-          # 触发内核源码解压（不实际编译）
-          make target/linux/prepare V=s
+          make target/compile -j$(nproc) V=sc
+          make package/compile -j$(nproc) V=sc
       - name: Compile firmware
         run: |
           # 使用 -j$(nproc) 并行编译，V=s 输出详细日志
