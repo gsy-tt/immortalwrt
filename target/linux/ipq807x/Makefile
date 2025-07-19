@@ -33,18 +33,4 @@ ORIG_DTS_DIR := $(TOPDIR)/target/linux/ipq807x/dts/qcom
 # 内核DTS目录（编译时实际使用的目录）
 KERNEL_DTS_DIR := $(LINUX_DIR)/arch/arm64/boot/dts/qcom
 
-
-# 强制复制.dtsi到内核目录（核心修复）
-define Build/Prepare
-    $(call Build/Prepare/Default)  # 保留默认准备步骤
-
-    # 复制.dtsi到内核DTS目录，确保和DTS在同一目录
-    @echo "复制文件: $(ORIG_DTS_DIR)/ipq5332-base.dtsi -> $(KERNEL_DTS_DIR)/"
-    cp $(ORIG_DTS_DIR)/ipq5332-base.dtsi $(KERNEL_DTS_DIR)/ || echo "复制失败!"
-
-    # 验证文件是否存在
-    @echo "验证文件是否存在:"
-    @ls -l $(KERNEL_DTS_DIR)/ipq5332-base.dtsi || echo "文件不存在!"
-endef
-
 $(eval $(call BuildTarget))
