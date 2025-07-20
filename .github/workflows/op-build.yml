@@ -9,16 +9,15 @@ jobs:
   build:
     runs-on: ubuntu-22.04  # 指定具体的 Ubuntu 版本，确保环境一致性    
     steps:
-      - name: Checkout your repository
+      - name: 加载仓库 https://github.com/gsy-tt/immortalwrt
         uses: actions/checkout@v4
         with:
           repository: gsy-tt/immortalwrt  # 使用您的仓库
           ref: openwrt-23.05  # 指定 openwrt-23.05 分支
           fetch-depth: 0  # 获取完整的仓库历史，确保所有提交可用
 
-      - name: Setup build environment
+      - name: apt-get 安装依赖
         run: |
-          # 安装必要的依赖（根据 OpenWrt 官方文档）
           sudo apt-get update -y
           sudo apt-get install -y  build-essential ccache ecj fastjar file g++ gawk gettext git \
             java-propose-classpath libelf-dev libncurses5-dev libncursesw5-dev libssl-dev \
@@ -27,40 +26,50 @@ jobs:
             libglib2.0-dev libarchive-dev pkg-config libz-dev libltdl-dev libc6-dev-i386 \
             g++-multilib libncurses5-dev libreadline-dev libyaml-dev \
             python3-dev python3-pip python3-setuptools python3-wheel
-          # 验证关键工具
-          echo "=== 验证依赖安装 ==="
-          flex --version || echo "flex 未安装"
-          bison --version || echo "bison 未安装"
-          swig -version || echo "swig 未安装"
-          quilt --version || echo "quilt 未安装"
-      - name: copy .config
+      - name: 备份 .config 文件
         run: |
           cp .config .config-bak
           
-      - name: Configure feeds
+      - name: 更新和安装 feeds
         run: |
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
 
-      - name: Build configuration
+      - name: 恢复.config文件
         run: |
           cp .config-bak .config
 
-      - name: Temporarily remove faulty patch
+      - name: 检查并安装编译所需的依赖工具
         run: |
           make prereq V=sc
-          
-          make download -j$(nproc)
-          find dl -size -1024c -exec ls -l {} \;
-          find dl -size -1024c -exec rm -f {} \;
-          make target/compile -j$(nproc) V=sc
-          make package/compile -j$(nproc) V=sc
-      - name: Compile firmware
-        run: |
-          # 使用 -j$(nproc) 并行编译，V=s 输出详细日志
-          make -j$(nproc) V=s || make -j1 V=s  # 如果并行编译失败，尝试单线程编译
 
+      - name:  预下载所有源码
+        run: |
+          make download -j$(nproc) V=s
+
+      - name: 编译 OpenWrt 构建系统所需的基础工具（如文件系统工具、压缩工具等）
+        run: |
+          make tools/compile -j$(nproc) V=sc
+      - name: 编译交叉编译工具链（如arm-openwrt-linux-gcc），用于在主机上编译目标设备的代码
+        run: |
+          make toolchain/compile -j$(nproc) V=sc
+
+      - name: 编译内核和目标系统（如 Linux 内核、设备驱动、基础系统库）
+        run: |
+          make target/compile -j$(nproc) V=sc  
+
+      - name: 编译所有在make menuconfig中选择的软件包（如 LuCI 界面、OpenVPN、AdGuardHome 等）
+        run: |
+          make package/compile -j$(nproc) V=sc 
+
+      - name: 生成软件包索引文件（Packages和Packages.gz），用于后续安装和更新
+        run: |
+          make package/index  V=sc
+
+      - name: 生成最终固件镜像（如openwrt-<device>.bin），包含内核、系统和选定的软件包
+        run: |
+          make image  V=sc
       - name: Collect artifacts
         id: collect
         run: |
