@@ -72,7 +72,7 @@ jobs:
 
       - name: 生成最终固件镜像（如openwrt-<device>.bin），包含内核、系统和选定的软件包
         run: |
-          make image  V=1
+          make target/image V=1
           #make world V=sc
       - name: Collect artifacts
         id: collect
