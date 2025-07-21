@@ -215,10 +215,22 @@ define Device/zyxel_nbg7815
 endef
 TARGET_DEVICES += zyxel_nbg7815
 define Device/ipq5332-jdcloud-be6500
-  $(Device/ipq807x_generic)
-  DEVICE_VENDOR := JDCloud
-  DEVICE_MODEL := BE6500
-  DEVICE_DTS := qcom/ipq5332-jdcloud-be6500
-
+	$(call Device/FitImage)  # 复用标准FitImage模板（含内核+设备树打包）
+	$(call Device/UbiFit)    # 若设备使用UBI分区，启用此模板
+	DEVICE_VENDOR := JDCloud
+	DEVICE_MODEL := BE6500
+	DEVICE_DTS := qcom/ipq5332-jdcloud-be6500  # 确保DTS路径正确（相对于内核arch/arm64/boot/dts/）
+	DEVICE_DTS_CONFIG := config@ac04
+	BLOCKSIZE := 128k        # 根据设备闪存参数设置（常见为128k）
+	PAGESIZE := 2048         # 页大小（常见为2048）
+	IMAGE_SIZE := 16384k     # 固件总大小（根据设备闪存容量设置，如16MB）
+	IMAGES := sysupgrade.bin factory.bin
+	#IMAGE/factory.bin := append-kernel | append-rootfs | pad-rootfs | check-size | factory-image
+	IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | check-size | sysupgrade-tar
+	KERNEL_LOADADDR := 0x80080000
+	KERNEL_ENTRY := 0x80080000
+	#DEVICE_PACKAGES := ipq-wifi-jdcloud-be6500  # 若有专属无线固件，添加此处
+	KERNEL = kernel-bin | libdeflate-gzip | fit gzip $(KDIR)/image-qcom/ipq5332-jdcloud-be6500.dtb
 endef
+TARGET_DEVICES += ipq5332-jdcloud-be6500
 $(eval $(call Device,ipq5332-jdcloud-be6500))
