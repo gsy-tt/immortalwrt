@@ -81,10 +81,12 @@ jobs:
           FILES=$(ls *.bin *.img.gz 2>/dev/null || true)
           echo "artifact_files=$(echo $FILES | tr ' ' ',')" >> $GITHUB_ENV
           echo "artifact_count=$(echo $FILES | wc -w)" >> $GITHUB_ENV
+          find bin/ -name "*.bin"
+          find bin/ -name "*.img*"
 
       - name: Upload firmware artifacts
         uses: actions/upload-artifact@v4
-        if: env.artifact_count > 0
+        #if: env.artifact_count > 0
         with:
           name: be6500-firmware
           path: |
