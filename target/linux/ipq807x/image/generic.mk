@@ -244,4 +244,4 @@ define Device/ipq5332-jdcloud-be6500
 	KERNEL := kernel-bin | libdeflate-gzip | copy-dtb | fit gzip $(KDIR)/dtb/qcom/ipq5332-jdcloud-be6500.dtb
 endef
 TARGET_DEVICES += ipq5332-jdcloud-be6500
-$(eval $(call Device,ipq5332-jdcloud-be6500))
+#$(eval $(call Device,ipq5332-jdcloud-be6500))
