@@ -231,6 +231,13 @@ define Device/ipq5332-jdcloud-be6500
 	KERNEL_ENTRY := 0x80080000
 	#DEVICE_PACKAGES := ipq-wifi-jdcloud-be6500  # 若有专属无线固件，添加此处
 	KERNEL = kernel-bin | libdeflate-gzip | fit gzip $(KDIR)/dtb/qcom/ipq5332-jdcloud-be6500.dtb
+	# 关键修复：将编译好的.dtb复制到打包工具预期的路径
+	define Build/copy-dtb
+		# 创建目标目录（若不存在）
+		mkdir -p $(KDIR)/dtb/qcom
+		# 将编译生成的.dtb复制到目标路径
+		cp $(KDIR)/image-$(DEVICE_DTS).dtb $(KDIR)/dtb/qcom/ipq5332-jdcloud-be6500.dtb
+	endef
 endef
 TARGET_DEVICES += ipq5332-jdcloud-be6500
 $(eval $(call Device,ipq5332-jdcloud-be6500))
