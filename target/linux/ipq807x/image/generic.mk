@@ -230,7 +230,7 @@ define Device/ipq5332-jdcloud-be6500
 	KERNEL_LOADADDR := 0x80080000
 	KERNEL_ENTRY := 0x80080000
 	#DEVICE_PACKAGES := ipq-wifi-jdcloud-be6500  # 若有专属无线固件，添加此处
-	KERNEL = kernel-bin | libdeflate-gzip | fit gzip $(KDIR)/image-qcom/ipq5332-jdcloud-be6500.dtb
+	KERNEL = kernel-bin | libdeflate-gzip | fit gzip $(KDIR)/dtb/qcom/ipq5332-jdcloud-be6500.dtb
 endef
 TARGET_DEVICES += ipq5332-jdcloud-be6500
 $(eval $(call Device,ipq5332-jdcloud-be6500))
