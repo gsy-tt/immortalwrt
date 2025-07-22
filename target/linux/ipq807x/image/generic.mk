@@ -224,7 +224,7 @@ define Device/ipq5332-jdcloud-be6500
 	BLOCKSIZE := 128k        # 根据设备闪存参数设置（常见为128k）
 	PAGESIZE := 2048         # 页大小（常见为2048）
 	IMAGE_SIZE := 16384k     # 固件总大小（根据设备闪存容量设置，如16MB）
-	IMAGES := sysupgrade.bin factory.bin
+	IMAGES := sysupgrade.bin #factory.bin
 	#IMAGE/factory.bin := append-kernel | append-rootfs | pad-rootfs | check-size | factory-image
 	IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | check-size | sysupgrade-tar
 	KERNEL_LOADADDR := 0x80080000
