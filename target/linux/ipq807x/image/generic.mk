@@ -232,7 +232,6 @@ define Device/ipq5332-jdcloud-be6500
 	#DEVICE_PACKAGES := ipq-wifi-jdcloud-be6500  # 若有专属无线固件，添加此处
 	
 	# 关键修复：将编译好的.dtb复制到打包工具预期的路径
-		# 关键修复：将编译好的.dtb复制到打包工具预期的路径
 	define Build/copy-dtb
 		# 创建目标目录（若不存在）
 		mkdir -p $(KDIR)/dtb/qcom
