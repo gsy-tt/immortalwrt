@@ -131,13 +131,31 @@
     phy-mode = "rgmii";
     status = "okay";
 
+    /* 添加网口名称映射 */
+    fixed-link {
+        speed = <2500>;  /* 1000Mbps */
+        full-duplex;
+        pause;  /* 可选：启用流量控制，提升大流量稳定性 */
+    };
+
+    /* 定义物理网口为eth0 */
+    ports {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        port@0 {
+            reg = <0>;
+            label = "eth0";  /* 网口名称，需与network配置中的ports一致 */
+        };
+    };
     mdio {
         #address-cells = <1>;
         #size-cells = <0>;
 
         phy: ethernet-phy@0 {
             reg = <0>;
-            compatible = "ethernet-phy-ieee802.3-c22";
+            compatible = "ethernet-phy-ieee802.3-c45";
+            max-speed = <2500>;
             qcom,phy-mdio-addr = <0>;
             max-speed = <1000>;
             phy-mode = "rgmii";
@@ -188,5 +206,47 @@
         regulator-min-microvolt = <1800000>;
         regulator-max-microvolt = <1800000>;
         regulator-always-on;
+    };
+
+    /* WAN 网口引脚组（独立） */
+    wan_pins: wan-pins {
+        mux {
+            pins = "gpio6",  /* RGMII_TXD0 */
+                   "gpio7",  /* RGMII_TXD1 */
+                   "gpio8",  /* RGMII_TXD2 */
+                   "gpio9",  /* RGMII_TXD3 */
+                   "gpio10", /* RGMII_TX_CTRL */
+                   "gpio11", /* RGMII_TX_CLK */
+                   "gpio12", /* RGMII_RXD0 */
+                   "gpio13", /* RGMII_RXD1 */
+                   "gpio14", /* RGMII_RXD2 */
+                   "gpio15", /* RGMII_RXD3 */
+                   "gpio16", /* RGMII_RX_CTRL */
+                   "gpio17"; /* RGMII_RX_CLK */
+            function = "rgmii";
+            drive-strength = <16>;
+            bias-disable;
+        };
+    };
+
+    /* LAN 网口引脚组（独立） */
+    lan_pins: lan-pins {
+        mux {
+            pins = "gpio18", /* RGMII_TXD0 */
+                   "gpio19", /* RGMII_TXD1 */
+                   "gpio20", /* RGMII_TXD2 */
+                   "gpio21", /* RGMII_TXD3 */
+                   "gpio22", /* RGMII_TX_CTRL */
+                   "gpio23", /* RGMII_TX_CLK */
+                   "gpio24", /* RGMII_RXD0 */
+                   "gpio25", /* RGMII_RXD1 */
+                   "gpio26", /* RGMII_RXD2 */
+                   "gpio27", /* RGMII_RXD3 */
+                   "gpio28", /* RGMII_RX_CTRL */
+                   "gpio29"; /* RGMII_RX_CLK */
+            function = "rgmii";
+            drive-strength = <16>;
+            bias-disable;
+        };
     };
 };
