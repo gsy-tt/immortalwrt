@@ -1,6 +1,6 @@
 define Device/FitImage
 	KERNEL_SUFFIX := -uImage.itb
-	KERNEL = kernel-bin | libdeflate-gzip | fit gzip $$(KDIR)/image-$$(DEVICE_DTS).dtb
+	KERNEL = kernel-bin | libdeflate-gzip | fit gzip $$(KDIR)/image-ipq5332-jdcloud-be6500.dtb
 	KERNEL_NAME := Image
 endef
 
