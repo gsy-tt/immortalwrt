@@ -1,6 +1,6 @@
 --- /dev/null
 +++ b/arch/arm64/boot/dts/qcom/ipq5332-jdcloud-be6500.dts
-@@ -0,0 +1,120 @@
+@@ -0,0 +1,252 @@
 +/dts-v1/;
 +#include <dt-bindings/gpio/gpio.h>
 +#include <dt-bindings/input/input.h>
@@ -15,7 +15,7 @@
 +    };
 +
 +    chosen {
-+        bootargs = "console=ttyMSM0,115200n8 earlycon=msm_serial_dm,0x078af000";
++        bootargs = "console=ttyMSM0,115200n8 earlycon=msm_serial_dm,0x078af000 rootfstype=squashfs,jffs2";
 +    };
 +
 +    aliases {
@@ -23,6 +23,7 @@
 +        led-failsafe = &led_power;
 +        led-running = &led_power;
 +        led-upgrade = &led_power;
++        serial0 = &uart0;
 +    };
 +
 +    leds {
@@ -32,24 +33,28 @@
 +            label = "be6500:green:power";
 +            gpio = <&tlmm 32 GPIO_ACTIVE_LOW>;
 +            default-state = "on";
++            retain-state-suspended;
 +        };
 +
 +        led_wifi_2g: wifi-2g {
 +            label = "be6500:blue:wifi-2g";
 +            gpio = <&tlmm 33 GPIO_ACTIVE_LOW>;
 +            default-state = "off";
++            retain-state-suspended;
 +        };
 +
 +        led_wifi_5g: wifi-5g {
 +            label = "be6500:blue:wifi-5g";
 +            gpio = <&tlmm 34 GPIO_ACTIVE_LOW>;
 +            default-state = "off";
++            retain-state-suspended;
 +        };
 +
 +        led_joy: joy {
 +            label = "be6500:rgb:joy";
 +            gpio = <&tlmm 35 GPIO_ACTIVE_LOW>;
 +            default-state = "off";
++            retain-state-suspended;
 +        };
 +    };
 +
@@ -73,51 +78,178 @@
 +        };
 +    };
 +
-+    usb {
-+        compatible = "qcom,ipq5332-usb";
-+        reg = <0x08800000 0x10000>;
-+        interrupts = <0 37 4>;
-+        clocks = <&clock 13>;
-+        clock-names = "usb";
++    /* eMMC存储控制器 - 关键配置 */
++    sdhci@7824000 {
++        compatible = "qcom,ipq5332-sdhci", "qcom,sdhci-msm";
++        reg = <0x0 0x07824000 0x0 0x1000>;
++        interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&clock GCC_SDCC1_AHB_CLK>, <&clock GCC_SDCC1_CLK>;
++        clock-names = "iface", "core";
++        bus-width = <8>;
++        no-1-8-v;
++        non-removable;
 +        status = "okay";
 +    };
 +
-+    ethernet@8000000 {
-+        compatible = "qcom,ipq5332-gmac";
-+        reg = <0x8000000 0x10000>;
-+        interrupts = <0 24 4>;
-+        qcom,phy-handle = <&phy>;
++    /* 电源管理配置 */
++    power-management@1000 {
++        compatible = "qcom,ipq5332-pm";
++        reg = <0x0 0x00001000 0x0 0x1000>;
 +        status = "okay";
 +    };
++};
 +
-+    mdio@8000000 {
-+        compatible = "qcom,ipq5332-mdio";
-+        reg = <0x8000000 0x10000>;
++/* 串口配置 */
++&uart0 {
++    status = "okay";
++};
++
++/* USB控制器配置 */
++&usb {
++    compatible = "qcom,ipq5332-dwc3";
++    reg = <0x0 0x08800000 0x0 0x10000>;
++    interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
++    clocks = <&clock GCC_USB30_MASTER_CLK>,
++             <&clock GCC_USB30_SLEEP_CLK>;
++    clock-names = "core", "sleep";
++    dr_mode = "host";
++    status = "okay";
++
++    usb3_phy: phy {
++        compatible = "qcom,ipq5332-usb-phy";
++        #phy-cells = <0>;
++        clocks = <&clock GCC_USB30_MASTER_CLK>;
++        status = "okay";
++    };
++};
++
++/* 以太网配置 */
++&ethernet@8000000 {
++    compatible = "qcom,ipq5332-gmac";
++    reg = <0x0 0x8000000 0x0 0x10000>;
++    interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++    clocks = <&clock GCC_ETH0_CLK>;
++    clock-names = "gmac";
++    qcom,phy-handle = <&phy>;
++    phy-mode = "rgmii";
++    status = "okay";
++
++    /* 添加网口名称映射 */
++    fixed-link {
++        speed = <2500>;  /* 1000Mbps */
++        full-duplex;
++        pause;  /* 可选：启用流量控制，提升大流量稳定性 */
++    };
++
++    /* 定义物理网口为eth0 */
++    ports {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        port@0 {
++            reg = <0>;
++            label = "eth0";  /* 网口名称，需与network配置中的ports一致 */
++        };
++    };
++    mdio {
 +        #address-cells = <1>;
 +        #size-cells = <0>;
 +
 +        phy: ethernet-phy@0 {
 +            reg = <0>;
-+            compatible = "ethernet-phy-ieee802.3-c22";
-+        };
-+    };
-+
-+    pcie: pcie@10000000 {
-+        ids = "pcie";
-+        compatible = "qcom,ipq5332-pcie";
-+        reg = <0x10000000 0x1000000>;
-+        interrupts = <0 43 4>;
-+        clocks = <&clock 24>;
-+        clock-names = "pcie";
-+        status = "okay";
-+        qcn6224: wifi@0,0 {
-+            compatible = "qcom,ath11k";
-+            reg = <0 0 0 0x1000>;
-+            status = "okay";
-+            device_type = "wifi";
-+            interrupt-parent = <&pcie>;
-+            interrupts = <0 43 4>;
-+            qcom,chip-id = <0x6224>;
++            compatible = "ethernet-phy-ieee802.3-c45";
++            max-speed = <2500>;
++            qcom,phy-mdio-addr = <0>;
++            max-speed = <1000>;
++            phy-mode = "rgmii";
 +        };
 +    };
 +};
++
++/* PCIe和WiFi配置 */
++&pcie {
++    compatible = "qcom,ipq5332-pcie";
++    reg = <0x0 0x10000000 0x0 0x1000000>;
++    interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
++    clocks = <&clock GCC_PCIE0_CLK>,
++             <&clock GCC_PCIE0_AHB_CLK>;
++    clock-names = "core", "iface";
++    status = "okay";
++    num-lanes = <1>;
++
++    qcn6224: wifi@0,0 {
++        compatible = "qcom,ath11k";
++        reg = <0 0 0 0x1000>;
++        status = "okay";
++        device_type = "pci";
++        interrupt-parent = <&pcie>;
++        interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
++        qcom,chip-id = <0x6224>;
++        qcom,board-id = <0x1000>;
++        qcom,mac-offset = <0x00000000>;
++        vdd-0.8-cx-mx-supply = <&vreg_l12a>;
++        vdd-1.8-cx-supply = <&vreg_l13a>;
++        power-domains = <&gcc PCIE0_GDSC>; 
++    };
++};
++
++/* 电压调节器配置 */
++&tlmm {
++    vreg_l12a: regulator-l12a {
++        compatible = "qcom,pm8005-regulator";
++        regulator-name = "vdd-0.8-cx-mx";
++        regulator-min-microvolt = <800000>;
++        regulator-max-microvolt = <800000>;
++        regulator-always-on;
++    };
++
++    vreg_l13a: regulator-l13a {
++        compatible = "qcom,pm8005-regulator";
++        regulator-name = "vdd-1.8-cx";
++        regulator-min-microvolt = <1800000>;
++        regulator-max-microvolt = <1800000>;
++        regulator-always-on;
++    };
++
++    /* WAN 网口引脚组（独立） */
++    wan_pins: wan-pins {
++        mux {
++            pins = "gpio6",  /* RGMII_TXD0 */
++                   "gpio7",  /* RGMII_TXD1 */
++                   "gpio8",  /* RGMII_TXD2 */
++                   "gpio9",  /* RGMII_TXD3 */
++                   "gpio10", /* RGMII_TX_CTRL */
++                   "gpio11", /* RGMII_TX_CLK */
++                   "gpio12", /* RGMII_RXD0 */
++                   "gpio13", /* RGMII_RXD1 */
++                   "gpio14", /* RGMII_RXD2 */
++                   "gpio15", /* RGMII_RXD3 */
++                   "gpio16", /* RGMII_RX_CTRL */
++                   "gpio17"; /* RGMII_RX_CLK */
++            function = "rgmii";
++            drive-strength = <16>;
++            bias-disable;
++        };
++    };
++
++    /* LAN 网口引脚组（独立） */
++    lan_pins: lan-pins {
++        mux {
++            pins = "gpio18", /* RGMII_TXD0 */
++                   "gpio19", /* RGMII_TXD1 */
++                   "gpio20", /* RGMII_TXD2 */
++                   "gpio21", /* RGMII_TXD3 */
++                   "gpio22", /* RGMII_TX_CTRL */
++                   "gpio23", /* RGMII_TX_CLK */
++                   "gpio24", /* RGMII_RXD0 */
++                   "gpio25", /* RGMII_RXD1 */
++                   "gpio26", /* RGMII_RXD2 */
++                   "gpio27", /* RGMII_RXD3 */
++                   "gpio28", /* RGMII_RX_CTRL */
++                   "gpio29"; /* RGMII_RX_CLK */
++            function = "rgmii";
++            drive-strength = <16>;
++            bias-disable;
++        };
++    };
++}
