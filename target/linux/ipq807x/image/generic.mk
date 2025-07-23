@@ -225,8 +225,8 @@ define Device/ipq5332-jdcloud-be6500
 	PAGESIZE := 4096         # 页大小（常见为2048）
 	IMAGE_SIZE := 524288k     # 固件总大小（根据设备闪存容量设置，如16MB）
 	IMAGES := sysupgrade.bin factory.bin
-	IMAGE/factory.bin := append-kernel | append-rootfs | pad-rootfs | check-size | factory-image
-	IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | check-size | sysupgrade-tar
+	IMAGE/factory.bin := append-kernel | append-rootfs | pad-rootfs | pad-to 64k | uboot-image -T factory -a 0x44000000 -e 0x44000000 | check-size  
+	IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | check-size | sign-image | sysupgrade-tar 
 	KERNEL_LOADADDR := 0x80080000
 	KERNEL_ENTRY := 0x80080000
 	#DEVICE_PACKAGES := ipq-wifi-jdcloud-be6500
