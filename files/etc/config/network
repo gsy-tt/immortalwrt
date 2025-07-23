@@ -1,0 +1,64 @@
+# /etc/config/network
+
+config interface 'loopback'
+    option device 'lo'
+    option proto 'static'
+    option ipaddr '127.0.0.1'
+    option netmask '255.0.0.0'
+
+# 2.5G WAN接口（1个网口）
+config interface 'wan'
+    option device 'eth0'  # 对应DTS中的WAN网口（如eth0）
+    option proto 'dhcp'   # 默认DHCP（可根据需求改为pppoe）
+    option ipv6 'auto'    # 支持IPv6（可选）
+    # 关键：2.5G速率协商配置（避免限速）
+    option speed 'auto'   # 自动协商（优先），或强制2.5G全双工（需驱动支持）
+    option duplex 'full'  # 全双工模式（2.5G必须全双工）
+    # 禁用不必要的功能（减少性能消耗）
+    option peerdns '0'    # 可选：禁用ISP DNS，后续手动指定公共DNS
+
+config interface 'wan6'  # IPv6 WAN（可选，按需启用）
+    option device '@wan'
+    option proto 'dhcpv6'
+
+# 2.5G LAN接口（3个网口桥接）
+config interface 'lan'
+    option device 'br-lan'  # 桥接3个LAN网口
+    option proto 'static'
+    option ipaddr '192.168.1.1'  # 路由器LAN地址
+    option netmask '255.255.255.0'
+    option ip6assign '60'  # IPv6前缀分配
+
+# 桥接LAN网口（将3个2.5G LAN网口合并为一个LAN网络）
+config device
+    option name 'br-lan'
+    option type 'bridge'  # 桥接模式（多LAN口必须）
+    # 绑定3个LAN网口（对应DTS中的LAN硬件网口）
+    list ports 'eth1'     # LAN1网口
+    list ports 'eth2'     # LAN2网口
+    list ports 'eth3'     # LAN3网口
+    # 2.5G桥接优化：启用硬件加速（如支持）
+    option stp '1'        # 启用生成树协议（避免多LAN口环路）
+    option multicast_querier '1'  # 优化组播转发（可选）
+
+# 速率协商强制（针对2.5G网口，避免协商到1G）
+# 注：如果“option speed 'auto'”正常，可省略此部分；若协商异常则强制
+config device
+    option name 'eth0'  # WAN网口
+    option speed '2500'  # 强制2.5G（单位Mbps，部分驱动支持）
+    option duplex 'full'
+
+config device
+    option name 'eth1'  # LAN1网口
+    option speed '2500'
+    option duplex 'full'
+
+config device
+    option name 'eth2'  # LAN2网口
+    option speed '2500'
+    option duplex 'full'
+
+config device
+    option name 'eth3'  # LAN3网口
+    option speed '2500'
+    option duplex 'full'
