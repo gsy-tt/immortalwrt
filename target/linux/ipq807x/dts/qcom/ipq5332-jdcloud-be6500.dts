@@ -62,14 +62,14 @@
 
         reset {
             label = "Reset";
-            gpios = <&tlmm 26 GPIO_ACTIVE_LOW>;
+            gpios = <&tlmm 30 GPIO_ACTIVE_LOW>;
             linux,code = <KEY_RESTART>;
             debounce-interval = <200>;
         };
 
         joy {
             label = "Joy";
-            gpios = <&tlmm 27 GPIO_ACTIVE_LOW>;
+            gpios = <&tlmm 31 GPIO_ACTIVE_LOW>;
             linux,code = <KEY_PROG1>;
             debounce-interval = <200>;
         };
@@ -133,7 +133,7 @@
 
     /* 添加网口名称映射 */
     fixed-link {
-        speed = <2500>;  /* 1000Mbps */
+        speed = <2500>;  /* 2.5Gbps */
         full-duplex;
         pause;  /* 可选：启用流量控制，提升大流量稳定性 */
     };
@@ -157,7 +157,6 @@
             compatible = "ethernet-phy-ieee802.3-c45";
             max-speed = <2500>;
             qcom,phy-mdio-addr = <0>;
-            max-speed = <1000>;
             phy-mode = "rgmii";
         };
     };
