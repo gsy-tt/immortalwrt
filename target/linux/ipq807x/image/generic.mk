@@ -219,7 +219,7 @@ define Device/ipq5332-jdcloud-be6500
 	$(call Device/EmmcImage)    # 若设备使用UBI分区，启用此模板
 	DEVICE_VENDOR := JDCloud
 	DEVICE_MODEL := BE6500
-	DEVICE_DTS := ipq5332-jdcloud-be6500  # 确保DTS路径正确（相对于内核arch/arm64/boot/dts/）
+	DEVICE_DTS := qcom/ipq5332-jdcloud-be6500  # 确保DTS路径正确（相对于内核arch/arm64/boot/dts/）
 	DEVICE_DTS_CONFIG := config@ac04
 	BLOCKSIZE := 512k        # 根据设备闪存参数设置（常见为128k）
 	PAGESIZE := 4096         # 页大小（常见为2048）
