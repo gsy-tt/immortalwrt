@@ -80,7 +80,7 @@
         compatible = "qcom,ipq5332-sdhci", "qcom,sdhci-msm";
         reg = <0x0 0x07824000 0x0 0x1000>;
         interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
-        clocks = <&clock GCC_SDCC1_AHB_CLK>, <&clock GCC_SDCC1_CLK>;
+        clocks = <&clock GCC_SDCC1_AHB_CLK>,<&clock GCC_SDCC1_CLK>;
         clock-names = "iface", "core";
         bus-width = <8>;
         no-1-8-v;
