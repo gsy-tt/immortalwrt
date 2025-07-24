@@ -1,33 +1,114 @@
 --- /dev/null
 +++ b/arch/arm64/boot/dts/qcom/ipq5332-base.dtsi
-@@ -0,0 +1,30 @@
+@@ -0,0 +1,111 @@
 +#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/qcom,gcc-ipq5332.h>  // 引入时钟定义
 +
 +/ {
 +    #address-cells = <2>;
 +    #size-cells = <2>;
 +
++    // 中断控制器（GIC）- 必须定义，硬件中断依赖
++    intc: interrupt-controller@17000000 {
++        compatible = "arm,gic-v3";
++        reg = <0x0 0x17000000 0x0 0x10000>,  // GICD
++              <0x0 0x17040000 0x0 0x200000>; // GICR
++        #interrupt-cells = <3>;
++        interrupt-controller;
++        interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++    };
++
++    // 系统时钟（晶振）- 核心时钟源
++    clock_32k: clock-32k {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <32768>;
++    };
++
++    // 主时钟控制器（GCC）- 管理所有硬件时钟
++    gcc: clock-controller@1800000 {
++        compatible = "qcom,gcc-ipq5332";
++        reg = <0x0 0x01800000 0x0 0x100000>;  // 时钟控制器寄存器地址
++        #clock-cells = <1>;
++        clocks = <&clock_32k>;  // 依赖32k晶振
++        clock-names = "xo_32k";
++    };
++
++    // GPIO控制器（TLMM）- 已有的节点，补充兼容性
 +    tlmm: gpio@1000000 {
 +        compatible = "qcom,ipq5332-tlmm", "qcom,tlmm-v2";
-+        reg = <0x0 0x01000000 0x0 0x100000>;
-+        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++        reg = <0x0 0x01000000 0x0 0x100000>;  // GPIO寄存器地址
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;  // 中断号
 +        gpio-controller;
-+        #gpio-cells = <2>;
++        #gpio-cells = <2>;  // 支持gpio号+标志（如GPIO_ACTIVE_LOW）
 +        interrupt-controller;
 +        #interrupt-cells = <2>;
 +    };
 +
-+    clock: clock-controller@1800000 {
-+        compatible = "qcom,ipq5332-clock";
-+        reg = <0x0 0x01800000 0x0 0x100000>;
-+        #clock-cells = <1>;
++    // UART0（串口）- 定义基础节点，标签设为uart0（与你的DTS引用对应）
++    uart0: serial@78af000 {
++        compatible = "qcom,msm-uartdm-v1.4";
++        reg = <0x0 0x078af000 0x0 0x1000>;  // UART0寄存器地址
++        interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;  // 中断号
++        clocks = <&gcc GCC_UART0_CLK>;  // 引用GCC时钟
++        clock-names = "core";
++        status = "disabled";  // 默认禁用，由你的DTS启用
 +    };
 +
-+    serial@78af000 {
-+        compatible = "qcom,msm-uartdm-v1.4";
-+        reg = <0x0 0x078af000 0x0 0x1000>;
-+        interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&clock 24>;
-+        status = "okay";
++    // USB控制器（DWC3）- 基础定义，与你的&usb引用对应
++    usb: usb@8800000 {
++        compatible = "qcom,ipq5332-dwc3";
++        reg = <0x0 0x08800000 0x0 0x10000>;  // USB控制器寄存器
++        interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;  // 中断号
++        clocks = <&gcc GCC_USB30_MASTER_CLK>,
++                 <&gcc GCC_USB30_SLEEP_CLK>;
++        clock-names = "core", "sleep";
++        status = "disabled";  // 默认禁用，由你的DTS启用
 +    };
++
++    // 以太网控制器（GMAC）- 基础定义，与你的&ethernet@8000000对应
++    ethernet: ethernet@8000000 {
++        compatible = "qcom,ipq5332-gmac";
++        reg = <0x0 0x08000000 0x0 0x10000>;  // 以太网寄存器地址
++        interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;  // 中断号
++        clocks = <&gcc GCC_ETH0_CLK>;  // 以太网时钟
++        clock-names = "gmac";
++        status = "disabled";  // 默认禁用，由你的DTS启用
++    };
++
++    // PCIe控制器（用于连接5G无线芯片QCN6224）
++    pcie: pcie@10000000 {
++        compatible = "qcom,ipq5332-pcie";
++        reg = <0x0 0x10000000 0x0 0x1000000>;  // PCIe寄存器地址
++        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;  // 中断号
++        clocks = <&gcc GCC_PCIE0_CLK>,
++                 <&gcc GCC_PCIE0_AHB_CLK>;
++        clock-names = "core", "iface";
++        num-lanes = <1>;  // 1条PCIe通道（与硬件匹配）
++        status = "disabled";  // 默认禁用，由你的DTS启用
++    };
++
++    // eMMC控制器（用于128GB闪存）
++    sdhci: sdhci@7824000 {
++        compatible = "qcom,ipq5332-sdhci", "qcom,sdhci-msm";
++        reg = <0x0 0x07824000 0x0 0x1000>;  // eMMC寄存器地址
++        interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;  // 中断号
++        clocks = <&gcc GCC_SDCC1_AHB_CLK>, <&gcc GCC_SDCC1_CLK>;
++        clock-names = "iface", "core";
++        bus-width = <8>;  // eMMC是8位总线
++        non-removable;  // 闪存不可移除
++        status = "disabled";  // 默认禁用，由你的DTS启用
++    };
++
++    // 电源管理域（GDSC）- 管理硬件电源
++    gcc: power-controller@1800000 {
++        compatible = "qcom,gcc-ipq5332";
++        #power-domain-cells = <1>;
++    };
++};
++
++// 中断绑定：所有中断由GIC控制器管理
++&intc {
++    #address-cells = <0>;
++    #size-cells = <0>;
 +};
