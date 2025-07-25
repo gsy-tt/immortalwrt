@@ -177,13 +177,13 @@
         reg = <0 0 0 0x1000>;
         status = "okay";
         interrupt-parent = <&pcie>;
-        interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+        interrupts = <0>;
         qcom,chip-id = <0x6224>;
         qcom,board-id = <0x1000>;
         qcom,mac-offset = <0x00000000>;
         vdd-0.8-cx-mx-supply = <&vreg_l12a>;
         vdd-1.8-cx-supply = <&vreg_l13a>;
-        power-domains = <&gcc PCIE0_GDSC>; 
+        power-domains = <&gcc 0>; 
     };
 };
 
