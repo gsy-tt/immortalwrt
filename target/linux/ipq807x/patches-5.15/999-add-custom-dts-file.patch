@@ -250,8 +250,3 @@
 +        };
 +    };
 +};
-+            drive-strength = <16>;
-+            bias-disable;
-+        };
-+    };
-+};
