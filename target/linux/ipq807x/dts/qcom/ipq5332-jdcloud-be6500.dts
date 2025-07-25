@@ -80,7 +80,7 @@
         compatible = "qcom,ipq5332-sdhci", "qcom,sdhci-msm";
         reg = <0x0 0x07824000 0x0 0x1000>;
         interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
-        clocks = <&clock GCC_SDCC1_AHB_CLK>,<&clock GCC_SDCC1_CLK>;
+        clocks = <&gcc GCC_SDCC1_AHB_CLK>, <&gcc GCC_SDCC1_CLK>;
         clock-names = "iface", "core";
         bus-width = <8>;
         no-1-8-v;
@@ -106,8 +106,8 @@
     compatible = "qcom,ipq5332-dwc3";
     reg = <0x0 0x08800000 0x0 0x10000>;
     interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-    clocks = <&clock GCC_USB30_MASTER_CLK>,
-             <&clock GCC_USB30_SLEEP_CLK>;
+    clocks = <&gcc GCC_USB30_MASTER_CLK>,
+             <&gcc GCC_USB30_SLEEP_CLK>;
     clock-names = "core", "sleep";
     dr_mode = "host";
     status = "okay";
@@ -125,7 +125,7 @@
     compatible = "qcom,ipq5332-gmac";
     reg = <0x0 0x8000000 0x0 0x10000>;
     interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-    clocks = <&clock GCC_ETH0_CLK>;
+    clocks = <&gcc GCC_ETH0_CLK;
     clock-names = "gmac";
     qcom,phy-handle = <&phy>;
     phy-mode = "rgmii";
@@ -167,8 +167,8 @@
     compatible = "qcom,ipq5332-pcie";
     reg = <0x0 0x10000000 0x0 0x1000000>;
     interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-    clocks = <&clock GCC_PCIE0_CLK>,
-             <&clock GCC_PCIE0_AHB_CLK>;
+    clocks = <&gcc GCC_PCIE0_CLK>,
+             <&gcc GCC_PCIE0_AHB_CLK>;
     clock-names = "core", "iface";
     status = "okay";
     num-lanes = <1>;
@@ -177,7 +177,6 @@
         compatible = "qcom,ath11k";
         reg = <0 0 0 0x1000>;
         status = "okay";
-        device_type = "pci";
         interrupt-parent = <&pcie>;
         interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
         qcom,chip-id = <0x6224>;
