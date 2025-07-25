@@ -151,7 +151,6 @@
             compatible = "ethernet-phy-ieee802.3-c45";
             max-speed = <2500>;
             qcom,phy-mdio-addr = <0>;
-            phy-mode = "rgmii";
         };
     };
 };
