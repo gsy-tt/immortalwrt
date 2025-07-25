@@ -183,8 +183,8 @@
 };
 
 /* 电压调节器配置 */
- /* &tlmm {
-    vreg_l12a: regulator-l12a {
+&tlmm {
+    /*vreg_l12a: regulator-l12a {
         compatible = "qcom,pm8005-regulator";
         regulator-name = "vdd-0.8-cx-mx";
         regulator-min-microvolt = <800000>;
