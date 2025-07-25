@@ -90,9 +90,9 @@
 
     /* 电源管理配置 */
     power-management@1000 {
-        compatible = "qcom,ipq5332-pm";
+        compatible = "qcom,ipq5332-pm"; 
         reg = <0x0 0x00001000 0x0 0x1000>;
-        status = "okay";
+        status = "disabled";
     };
 };
 
@@ -130,12 +130,7 @@
     phy-mode = "rgmii";
     status = "okay";
 
-    /* 添加网口名称映射 */
-    fixed-link {
-        speed = <2500>;  /* 2.5Gbps */
-        full-duplex;
-        pause;  /* 可选：启用流量控制，提升大流量稳定性 */
-    };
+   
 
     /* 定义物理网口为eth0 */
     ports {
@@ -183,12 +178,12 @@
         qcom,mac-offset = <0x00000000>;
         vdd-0.8-cx-mx-supply = <&vreg_l12a>;
         vdd-1.8-cx-supply = <&vreg_l13a>;
-        power-domains = <&gcc 0>; 
+        power-domains = <&gcc_pm 0>; 
     };
 };
 
 /* 电压调节器配置 */
-&tlmm {
+ /* &tlmm {
     vreg_l12a: regulator-l12a {
         compatible = "qcom,pm8005-regulator";
         regulator-name = "vdd-0.8-cx-mx";
@@ -203,7 +198,7 @@
         regulator-min-microvolt = <1800000>;
         regulator-max-microvolt = <1800000>;
         regulator-always-on;
-    };
+    }; */
 
     /* WAN 网口引脚组（独立） */
     wan_pins: wan-pins {
