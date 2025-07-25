@@ -1,5 +1,5 @@
 #include <dt-bindings/interrupt-controller/arm-gic.h>
-#include <dt-bindings/clock/qcom,gcc-ipq5332.h>  // 引入时钟定义
+#include <dt-bindings/clock/gcc-ipq5332.h>  // 引入时钟定义
 
 / {
     #address-cells = <2>;
