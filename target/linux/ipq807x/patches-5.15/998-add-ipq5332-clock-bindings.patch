@@ -1,4 +1,4 @@
-diff --git a/dt-bindings/clock/qcom,gcc-ipq5332.h b/dt-bindings/clock/qcom,gcc-ipq5332.h
+diff --git a/dt-bindings/clock/gcc-ipq5332.h b/dt-bindings/clock/gcc-ipq5332.h
 new file mode 100644
 index 0000000..abc1234
 --- /dev/null
