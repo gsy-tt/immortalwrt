@@ -1,6 +1,6 @@
 --- /dev/null
 +++ b/arch/arm64/boot/dts/qcom/ipq5332-jdcloud-be6500.dts
-@@ -0,0 +1,252 @@
+@@ -0,0 +1,250 @@
 +/dts-v1/;
 +#include <dt-bindings/gpio/gpio.h>
 +#include <dt-bindings/input/input.h>
@@ -65,14 +65,14 @@
 +
 +        reset {
 +            label = "Reset";
-+            gpios = <&tlmm 26 GPIO_ACTIVE_LOW>;
++            gpios = <&tlmm 30 GPIO_ACTIVE_LOW>;
 +            linux,code = <KEY_RESTART>;
 +            debounce-interval = <200>;
 +        };
 +
 +        joy {
 +            label = "Joy";
-+            gpios = <&tlmm 27 GPIO_ACTIVE_LOW>;
++            gpios = <&tlmm 31 GPIO_ACTIVE_LOW>;
 +            linux,code = <KEY_PROG1>;
 +            debounce-interval = <200>;
 +        };
@@ -83,7 +83,7 @@
 +        compatible = "qcom,ipq5332-sdhci", "qcom,sdhci-msm";
 +        reg = <0x0 0x07824000 0x0 0x1000>;
 +        interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&clock GCC_SDCC1_AHB_CLK>, <&clock GCC_SDCC1_CLK>;
++        clocks = <&gcc GCC_SDCC1_AHB_CLK>, <&gcc GCC_SDCC1_CLK>;
 +        clock-names = "iface", "core";
 +        bus-width = <8>;
 +        no-1-8-v;
@@ -109,8 +109,8 @@
 +    compatible = "qcom,ipq5332-dwc3";
 +    reg = <0x0 0x08800000 0x0 0x10000>;
 +    interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+    clocks = <&clock GCC_USB30_MASTER_CLK>,
-+             <&clock GCC_USB30_SLEEP_CLK>;
++    clocks = <&gcc GCC_USB30_MASTER_CLK>,
++             <&gcc GCC_USB30_SLEEP_CLK>;
 +    clock-names = "core", "sleep";
 +    dr_mode = "host";
 +    status = "okay";
@@ -128,7 +128,7 @@
 +    compatible = "qcom,ipq5332-gmac";
 +    reg = <0x0 0x8000000 0x0 0x10000>;
 +    interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+    clocks = <&clock GCC_ETH0_CLK>;
++    clocks = <&gcc GCC_ETH0_CLK;
 +    clock-names = "gmac";
 +    qcom,phy-handle = <&phy>;
 +    phy-mode = "rgmii";
@@ -136,7 +136,7 @@
 +
 +    /* 添加网口名称映射 */
 +    fixed-link {
-+        speed = <2500>;  /* 1000Mbps */
++        speed = <2500>;  /* 2.5Gbps */
 +        full-duplex;
 +        pause;  /* 可选：启用流量控制，提升大流量稳定性 */
 +    };
@@ -160,7 +160,6 @@
 +            compatible = "ethernet-phy-ieee802.3-c45";
 +            max-speed = <2500>;
 +            qcom,phy-mdio-addr = <0>;
-+            max-speed = <1000>;
 +            phy-mode = "rgmii";
 +        };
 +    };
@@ -171,8 +170,8 @@
 +    compatible = "qcom,ipq5332-pcie";
 +    reg = <0x0 0x10000000 0x0 0x1000000>;
 +    interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-+    clocks = <&clock GCC_PCIE0_CLK>,
-+             <&clock GCC_PCIE0_AHB_CLK>;
++    clocks = <&gcc GCC_PCIE0_CLK>,
++             <&gcc GCC_PCIE0_AHB_CLK>;
 +    clock-names = "core", "iface";
 +    status = "okay";
 +    num-lanes = <1>;
@@ -181,7 +180,6 @@
 +        compatible = "qcom,ath11k";
 +        reg = <0 0 0 0x1000>;
 +        status = "okay";
-+        device_type = "pci";
 +        interrupt-parent = <&pcie>;
 +        interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
 +        qcom,chip-id = <0x6224>;
@@ -252,4 +250,4 @@
 +            bias-disable;
 +        };
 +    };
-+}
++};
