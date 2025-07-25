@@ -1,6 +1,6 @@
 diff --git a/dt-bindings/clock/qcom,gcc-ipq5332.h b/dt-bindings/clock/qcom,gcc-ipq5332.h
 new file mode 100644
-index 0000000..abc1234
+index 0000000..0000000
 --- /dev/null
 +++ b/dt-bindings/clock/qcom,gcc-ipq5332.h
 @@ -0,0 +1,15 @@
@@ -8,7 +8,6 @@ index 0000000..abc1234
 +#ifndef __DT_BINDINGS_CLOCK_QCOM_GCC_IPQ5332_H
 +#define __DT_BINDINGS_CLOCK_QCOM_GCC_IPQ5332_H
 +
-+/* 时钟标识符（根据设备树引用补充） */
 +#define GCC_UART0_CLK               1
 +#define GCC_USB30_MASTER_CLK        2
 +#define GCC_USB30_SLEEP_CLK         3
