@@ -98,7 +98,7 @@
     };
 
     // 电源管理域（GDSC）- 管理硬件电源
-    gcc: power-controller@1800000 {
+    gcc_pm: power-controller@1800000 {
         compatible = "qcom,gcc-ipq5332";
         #power-domain-cells = <1>;
     };
