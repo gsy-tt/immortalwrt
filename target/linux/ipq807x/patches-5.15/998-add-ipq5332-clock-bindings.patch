@@ -3,7 +3,7 @@ new file mode 100644
 index 0000000..abc1234
 --- /dev/null
 +++ b/dt-bindings/clock/qcom,gcc-ipq5332.h
-@@ -0,0 +1,14 @@
+@@ -0,0 +1,15 @@
 +/* SPDX-License-Identifier: GPL-2.0-only */
 +#ifndef __DT_BINDINGS_CLOCK_QCOM_GCC_IPQ5332_H
 +#define __DT_BINDINGS_CLOCK_QCOM_GCC_IPQ5332_H
