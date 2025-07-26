@@ -92,7 +92,7 @@
     power-management@1000 {
         compatible = "qcom,ipq5332-pm"; 
         reg = <0x0 0x00001000 0x0 0x1000>;
-        status = "disabled";
+        status = "okay";
     };
 };
 
@@ -150,7 +150,7 @@
             reg = <0>;
             compatible = "ethernet-phy-ieee802.3-c45";
             max-speed = <2500>;
-            qcom,phy-mdio-addr = <0>;
+            
         };
     };
 };
@@ -240,4 +240,6 @@
             bias-disable;
         };
     };
+    pinctrl-0 = <&wan_pins &lan_pins>;  // 关联WAN/LAN引脚组
+    pinctrl-names = "default";  // 引脚配置名称
 };
