@@ -1,6 +1,6 @@
 --- /dev/null
 +++ b/arch/arm64/boot/dts/qcom/ipq5332-jdcloud-be6500.dts
-@@ -0,0 +1,243 @@
+@@ -0,0 +1,245 @@
 +/dts-v1/;
 +#include <dt-bindings/gpio/gpio.h>
 +#include <dt-bindings/input/input.h>
@@ -93,7 +93,7 @@
 +
 +    /* 电源管理配置 */
 +    power-management@1000 {
-+        compatible = "qcom,ipq5332-pm";
++        compatible = "qcom,ipq5332-pm"; 
 +        reg = <0x0 0x00001000 0x0 0x1000>;
 +        status = "okay";
 +    };
@@ -133,12 +133,7 @@
 +    phy-mode = "rgmii";
 +    status = "okay";
 +
-+    /* 添加网口名称映射 */
-+    fixed-link {
-+        speed = <2500>;  /* 2.5Gbps */
-+        full-duplex;
-+        pause;  /* 可选：启用流量控制，提升大流量稳定性 */
-+    };
++   
 +
 +    /* 定义物理网口为eth0 */
 +    ports {
@@ -158,7 +153,7 @@
 +            reg = <0>;
 +            compatible = "ethernet-phy-ieee802.3-c45";
 +            max-speed = <2500>;
-+            qcom,phy-mdio-addr = <0>;
++            
 +        };
 +    };
 +};
@@ -179,13 +174,13 @@
 +        reg = <0 0 0 0x1000>;
 +        status = "okay";
 +        interrupt-parent = <&pcie>;
-+        interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
++        interrupts = <0>;
 +        qcom,chip-id = <0x6224>;
 +        qcom,board-id = <0x1000>;
 +        qcom,mac-offset = <0x00000000>;
 +        vdd-0.8-cx-mx-supply = <&vreg_l12a>;
 +        vdd-1.8-cx-supply = <&vreg_l13a>;
-+        power-domains = <&gcc PCIE0_GDSC>; 
++        power-domains = <&gcc_pm 0>; 
 +    };
 +};
 +
@@ -205,7 +200,7 @@
 +        regulator-min-microvolt = <1800000>;
 +        regulator-max-microvolt = <1800000>;
 +        regulator-always-on;
-+    };*/
++    }; */
 +
 +    /* WAN 网口引脚组（独立） */
 +    wan_pins: wan-pins {
@@ -248,4 +243,6 @@
 +            bias-disable;
 +        };
 +    };
++    pinctrl-0 = <&wan_pins &lan_pins>;  // 关联WAN/LAN引脚组
++    pinctrl-names = "default";  // 引脚配置名称
 +};
