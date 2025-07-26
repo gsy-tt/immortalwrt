@@ -123,7 +123,7 @@
 +};
 +
 +/* 以太网配置 */
-+&ethernet@8000000 {
++&ethernet {
 +    compatible = "qcom,ipq5332-gmac";
 +    reg = <0x0 0x8000000 0x0 0x10000>;
 +    interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
@@ -186,6 +186,8 @@
 +
 +/* 电压调节器配置 */
 +&tlmm {
++    pinctrl-0 = <&wan_pins &lan_pins>;  // 关联WAN/LAN引脚组
++    pinctrl-names = "default";  // 引脚配置名称
 +    vreg_l12a: regulator-l12a {
 +        compatible = "qcom,pm8005-regulator";
 +        regulator-name = "vdd-0.8-cx-mx";
@@ -243,6 +245,4 @@
 +            bias-disable;
 +        };
 +    };
-+    pinctrl-0 = <&wan_pins &lan_pins>;  // 关联WAN/LAN引脚组
-+    pinctrl-names = "default";  // 引脚配置名称
 +};
