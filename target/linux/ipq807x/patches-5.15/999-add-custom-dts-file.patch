@@ -1,6 +1,6 @@
 --- /dev/null
 +++ b/arch/arm64/boot/dts/qcom/ipq5332-jdcloud-be6500.dts
-@@ -0,0 +1,245 @@
+@@ -0,0 +1,250 @@
 +/dts-v1/;
 +#include <dt-bindings/gpio/gpio.h>
 +#include <dt-bindings/input/input.h>
@@ -10,6 +10,21 @@
 +    model = "ipq5332-jdcloud-be6500";
 +    compatible = "qcom,ipq5332-jdcloud-be6500", "qcom,ipq5332";
 +
++    vreg_l12a: regulator-l12a {
++        compatible = "qcom,pm8005-regulator";
++        regulator-name = "vdd-0.8-cx-mx";
++        regulator-min-microvolt = <800000>;
++        regulator-max-microvolt = <800000>;
++        regulator-always-on;
++    };
++
++    vreg_l13a: regulator-l13a {
++        compatible = "qcom,pm8005-regulator";
++        regulator-name = "vdd-1.8-cx";
++        regulator-min-microvolt = <1800000>;
++        regulator-max-microvolt = <1800000>;
++        regulator-always-on;
++    }; 
 +    memory {
 +        reg = <0x0 0x0 0x0 0x40000000>; /* 1GB DDR4 */
 +    };
@@ -79,7 +94,7 @@
 +    };
 +
 +    /* eMMC存储控制器 - 关键配置 */
-+    sdhci@7824000 {
++    &sdhci@7824000 {
 +        compatible = "qcom,ipq5332-sdhci", "qcom,sdhci-msm";
 +        reg = <0x0 0x07824000 0x0 0x1000>;
 +        interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
@@ -89,6 +104,7 @@
 +        no-1-8-v;
 +        non-removable;
 +        status = "okay";
++        interrupt-parent = <&intc>;
 +    };
 +
 +    /* 电源管理配置 */
@@ -113,6 +129,7 @@
 +    clock-names = "core", "sleep";
 +    dr_mode = "host";
 +    status = "okay";
++    interrupt-parent = <&intc>;
 +
 +    usb3_phy: phy {
 +        compatible = "qcom,ipq5332-usb-phy";
@@ -132,6 +149,7 @@
 +    qcom,phy-handle = <&phy>;
 +    phy-mode = "rgmii";
 +    status = "okay";
++    interrupt-parent = <&intc>;
 +
 +   
 +
@@ -163,6 +181,7 @@
 +    compatible = "qcom,ipq5332-pcie";
 +    reg = <0x0 0x10000000 0x0 0x1000000>;
 +    interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
++    interrupt-parent = <&intc>;
 +    clocks = <&gcc GCC_PCIE0_CLK>,
 +             <&gcc GCC_PCIE0_AHB_CLK>;
 +    clock-names = "core", "iface";
@@ -171,7 +190,7 @@
 +
 +    qcn6224: wifi@0,0 {
 +        compatible = "qcom,ath11k";
-+        reg = <0 0 0 0x1000>;
++        reg = <0 0 0x0 0x1000>;
 +        status = "okay";
 +        interrupt-parent = <&pcie>;
 +        interrupts = <0>;
@@ -186,6 +205,7 @@
 +
 +/* 电压调节器配置 */
 +&tlmm {
+<<<<<<< Updated upstream
 +    pinctrl-0 = <&wan_pins &lan_pins>;  // 关联WAN/LAN引脚组
 +    pinctrl-names = "default";  // 引脚配置名称
 +    vreg_l12a: regulator-l12a {
@@ -203,6 +223,11 @@
 +        regulator-max-microvolt = <1800000>;
 +        regulator-always-on;
 +    }; 
+=======
++    interrupt-parent = <&intc>;
++    pinctrl-0 = <&wan_pins &lan_pins>;  // 关联WAN/LAN引脚组
++    pinctrl-names = "default";  // 引脚配置名称
+>>>>>>> Stashed changes
 +
 +    /* WAN 网口引脚组（独立） */
 +    wan_pins: wan-pins {

@@ -1,6 +1,6 @@
 --- /dev/null
 +++ b/arch/arm64/boot/dts/qcom/ipq5332-base.dtsi
-@@ -0,0 +1,111 @@
+@@ -0,0 +1,119 @@
 +#include <dt-bindings/interrupt-controller/arm-gic.h>
 +#include <dt-bindings/clock/qcom,gcc-ipq5332.h>  // 引入时钟定义
 +
@@ -39,6 +39,7 @@
 +        compatible = "qcom,ipq5332-tlmm", "qcom,tlmm-v2";
 +        reg = <0x0 0x01000000 0x0 0x100000>;  // GPIO寄存器地址
 +        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;  // 中断号
++        interrupt-parent = <&intc>;
 +        gpio-controller;
 +        #gpio-cells = <2>;  // 支持gpio号+标志（如GPIO_ACTIVE_LOW）
 +        interrupt-controller;
@@ -50,6 +51,7 @@
 +        compatible = "qcom,msm-uartdm-v1.4";
 +        reg = <0x0 0x078af000 0x0 0x1000>;  // UART0寄存器地址
 +        interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;  // 中断号
++        interrupt-parent = <&intc>;
 +        clocks = <&gcc GCC_UART0_CLK>;  // 引用GCC时钟
 +        clock-names = "core";
 +        status = "disabled";  // 默认禁用，由你的DTS启用
@@ -60,6 +62,7 @@
 +        compatible = "qcom,ipq5332-dwc3";
 +        reg = <0x0 0x08800000 0x0 0x10000>;  // USB控制器寄存器
 +        interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;  // 中断号
++        interrupt-parent = <&intc>;
 +        clocks = <&gcc GCC_USB30_MASTER_CLK>,
 +                 <&gcc GCC_USB30_SLEEP_CLK>;
 +        clock-names = "core", "sleep";
@@ -71,8 +74,11 @@
 +        compatible = "qcom,ipq5332-gmac";
 +        reg = <0x0 0x08000000 0x0 0x10000>;  // 以太网寄存器地址
 +        interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;  // 中断号
++        interrupt-parent = <&intc>;
 +        clocks = <&gcc GCC_ETH0_CLK>;  // 以太网时钟
 +        clock-names = "gmac";
++        #address-cells = <1>;  // 以太网子节点（ports）地址：1个段
++        #size-cells = <0>;
 +        status = "disabled";  // 默认禁用，由你的DTS启用
 +    };
 +
@@ -81,6 +87,7 @@
 +        compatible = "qcom,ipq5332-pcie";
 +        reg = <0x0 0x10000000 0x0 0x1000000>;  // PCIe寄存器地址
 +        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;  // 中断号
++        interrupt-parent = <&intc>;
 +        clocks = <&gcc GCC_PCIE0_CLK>,
 +                 <&gcc GCC_PCIE0_AHB_CLK>;
 +        clock-names = "core", "iface";
@@ -93,6 +100,7 @@
 +        compatible = "qcom,ipq5332-sdhci", "qcom,sdhci-msm";
 +        reg = <0x0 0x07824000 0x0 0x1000>;  // eMMC寄存器地址
 +        interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;  // 中断号
++        interrupt-parent = <&intc>;
 +        clocks = <&gcc GCC_SDCC1_AHB_CLK>, <&gcc GCC_SDCC1_CLK>;
 +        clock-names = "iface", "core";
 +        bus-width = <8>;  // eMMC是8位总线
@@ -101,7 +109,7 @@
 +    };
 +
 +    // 电源管理域（GDSC）- 管理硬件电源
-+    gcc: power-controller@1800000 {
++    gcc_pm: power-controller@1800000 {
 +        compatible = "qcom,gcc-ipq5332";
 +        #power-domain-cells = <1>;
 +    };
