@@ -94,7 +94,7 @@
 +    };
 +
 +    /* eMMC存储控制器 - 关键配置 */
-+    &sdhci@7824000 {
++    sdhci@7824000 {
 +        compatible = "qcom,ipq5332-sdhci", "qcom,sdhci-msm";
 +        reg = <0x0 0x07824000 0x0 0x1000>;
 +        interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
