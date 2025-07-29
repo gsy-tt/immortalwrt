@@ -24,7 +24,7 @@
 +        regulator-min-microvolt = <1800000>;
 +        regulator-max-microvolt = <1800000>;
 +        regulator-always-on;
-+    }; 
++    };
 +    memory {
 +        reg = <0x0 0x0 0x0 0x40000000>; /* 1GB DDR4 */
 +    };
@@ -150,9 +150,6 @@
 +    phy-mode = "rgmii";
 +    status = "okay";
 +    interrupt-parent = <&intc>;
-+
-+   
-+
 +    /* 定义物理网口为eth0 */
 +    ports {
 +        #address-cells = <1>;
@@ -190,7 +187,7 @@
 +
 +    qcn6224: wifi@0,0 {
 +        compatible = "qcom,ath11k";
-+        reg = <0 0 0x0 0x1000>;
++        reg = <0 0 0 0 0>;
 +        status = "okay";
 +        interrupt-parent = <&pcie>;
 +        interrupts = <0>;
@@ -222,11 +219,10 @@
 +        regulator-max-microvolt = <1800000>;
 +        regulator-always-on;
 +    }; 
-=======
++
 +    interrupt-parent = <&intc>;
 +    pinctrl-0 = <&wan_pins &lan_pins>;  // 关联WAN/LAN引脚组
 +    pinctrl-names = "default";  // 引脚配置名称
->>>>>>> Stashed changes
 +
 +    /* WAN 网口引脚组（独立） */
 +    wan_pins: wan-pins {
@@ -268,5 +264,5 @@
 +            drive-strength = <16>;
 +            bias-disable;
 +        };
-+    };
++    };    
 +};
