@@ -38,6 +38,13 @@ jobs:
         run: |
          make clean
          make dirclean 
+         # 清理apt缓存
+         sudo apt-get clean
+         sudo rm -rf /var/lib/apt/lists/*
+         # 清理临时目录
+         sudo rm -rf /tmp/* /var/tmp/*
+         # （可选）删除runner自带的冗余工具（如不影响编译的大型软件）
+         sudo rm -rf /usr/share/dotnet /usr/local/lib/android 2>/dev/null || true
 
       - name: 恢复.config文件
         run: |
