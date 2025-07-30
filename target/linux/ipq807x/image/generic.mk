@@ -229,7 +229,8 @@ define Device/ipq5332-jdcloud-be6500
 	KERNEL_ENTRY := 0x00080000     # 入口点与加载地址一致
 	FDT_LOADADDR := 0x01E00000     # 设备树加载地址（IPQ5332专用）
 	IMAGES := sysupgrade.bin factory.bin
-	IMAGE/factory.bin := append-kernel | append-rootfs | pad-rootfs | pad-to 64k | uboot-image -T factory -a $(KERNEL_LOADADDR) -e $(KERNEL_ENTRY) -d /home/teng/immortalwrt/build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/ipq5332-jdcloud-be6500.dtb | check-size
+        IMAGE/factory.bin := append-kernel | append-rootfs | pad-rootfs | pad-to 64k  | check-size
+	#IMAGE/factory.bin := append-kernel | append-rootfs | pad-rootfs | pad-to 64k | uboot-image -T factory -a $(KERNEL_LOADADDR) -e $(KERNEL_ENTRY) -d /home/teng/immortalwrt/build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/ipq5332-jdcloud-be6500.dtb | check-size
 	IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | check-size | sign-image | sysupgrade-tar
 	KERNEL := kernel-bin | libdeflate-gzip | fit gzip /home/teng/immortalwrt/build_dir/target-aarch64_cortex-a53_musl/linux-ipq807x_generic/linux-5.15.185/arch/arm64/boot/dts/qcom/ipq5332-jdcloud-be6500.dtb -a $(KERNEL_LOADADDR) -e $(KERNEL_ENTRY) -s $(FDT_LOADADDR)
 endef
