@@ -5,7 +5,7 @@ on:
     inputs:
       timeout:
         description: 'tmate session timeout in minutes'
-        default: '60'
+        default: '600'
         required: true
 
 jobs:
@@ -68,4 +68,5 @@ jobs:
           echo "======================================"
           echo "请使用以下命令连接到 tmate 会话："
           echo "ssh $TMATE_SSH_HOST"
+          echo "ssh $TMATE_WEB_HOST"
           echo "======================================"
