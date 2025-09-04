@@ -12,49 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-22.04  # 指定具体的 Ubuntu 版本，确保环境一致性    
     steps:
-      - name: Checkout your repository
-        uses: actions/checkout@v4
-        with:
-          repository: gsy-tt/immortalwrt  # 使用您的仓库
-          ref: openwrt-23.05  # 指定 openwrt-23.05 分支
-          fetch-depth: 0  # 获取完整的仓库历史，确保所有提交可用
-
-      - name: Setup build environment
-        run: |
-          # 安装必要的依赖（根据 OpenWrt 官方文档）
-          sudo apt-get update -y
-          sudo apt-get install -y  build-essential ccache ecj fastjar file g++ gawk gettext git \
-            java-propose-classpath libelf-dev libncurses5-dev libncursesw5-dev libssl-dev \
-            python3 python3-distutils python3-setuptools python3-dev rsync subversion swig \
-            time unzip wget xmlto zlib1g-dev lib32z1 lib32stdc++6 flex bison quilt libtool automake autoconf texinfo \
-            libglib2.0-dev libarchive-dev pkg-config libz-dev libltdl-dev libc6-dev-i386 \
-            g++-multilib libncurses5-dev libreadline-dev libyaml-dev \
-            python3-dev python3-pip python3-setuptools python3-wheel
-          # 验证关键工具
-          echo "=== 验证依赖安装 ==="
-          flex --version || echo "flex 未安装"
-          bison --version || echo "bison 未安装"
-          swig -version || echo "swig 未安装"
-          quilt --version || echo "quilt 未安装"
-      - name: copy .config
-        run: |
-          cp .config .config-bak
-          
-      - name: Configure feeds
-        run: |
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
-
-
-      - name: Build configuration
-        run: |
-          # 使用您的设备配置文件
-          # make defconfig
-          # 可选：自定义配置（取消注释以下行并添加配置命令）
-          # make menuconfig -d config.seed  # 使用配置种子文件
-          # make kernel_menuconfig  # 配置内核选项
-          cp .config-bak .config
-
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         with:
