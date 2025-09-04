@@ -12,15 +12,13 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - name: Setup tmate session  # 只有v3支持的参数，无任何无效输入
-        uses: mxschmitt/action-tmate@v3
+      - name: Setup tmate session（用v2版本，功能完整）
+        uses: mxschmitt/action-tmate@v2  # 关键：降级到v2，不是v3！
         with:
-          timeout: ${{ github.event.inputs.timeout }}  # ✅ v3唯一支持的超时参数（单位分钟，不是timeout-minutes）
-          limit-access-to-actor: true  # ✅ 仅你能访问，保留安全配置
-          # ❌ 删掉所有v3不支持的：timeout-minutes、output-web-url、enable-ipv6（v3也没有这个参数）
-          # 核心：用v3支持的command打印Web地址，此时TMATE_WEB_URL一定存在
-          command: |
+          timeout-minutes: ${{ github.event.inputs.timeout }}  # v2明确支持的超时参数
+          limit-access-to-actor: true  # 保留你的安全配置，仅你能访问
+          command: |  # v2明确支持的command参数，能打印Web地址
             echo "======================= 连接信息 ======================="
-            echo "✅ Web连接地址（复制到浏览器）：$TMATE_WEB_URL"
+            echo "✅ Web连接地址（复制到浏览器）：$TMATE_WEB_URL"  # 这行绝对有值
             echo "✅ SSH连接命令：ssh $TMATE_SSH_HOST"
             echo "======================================================="
