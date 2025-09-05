@@ -16,7 +16,7 @@ jobs:
         uses: mxschmitt/action-tmate@v2  # 关键：降级到v2，不是v3！
         with:
           timeout-minutes: ${{ github.event.inputs.timeout }}  # v2明确支持的超时参数
-          limit-access-to-actor: true  # 保留你的安全配置，仅你能访问
+          # limit-access-to-actor: true  # 保留你的安全配置，仅你能访问
           command: |  # v2明确支持的command参数，能打印Web地址
             echo "======================= 连接信息 ======================="
             echo "✅ Web连接地址（复制到浏览器）：$TMATE_WEB_URL"  # 这行绝对有值
